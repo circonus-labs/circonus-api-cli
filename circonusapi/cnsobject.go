@@ -1,6 +1,5 @@
-// Copyright 2016 Alem Abreha. All rights reserved.
-// Use of this source code is governed by a MIT
-// license that can be found in the LICENSE file.
+// Copyright 2016 Alem Abreha <alem.abreha@gmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT license that can be found in the LICENSE file.
 package circonusapi
 
 type HTTPHeader struct {
@@ -41,7 +40,7 @@ type Alert struct {
 	MetricLink      string   `json:"_metric_link"`
 	MetricName      string   `json:"_metric_name"`
 	MetricNotes     string   `json:"_metric_notes"`
-	OccuredOn       float64  `json:"_occured_on"`
+	OccurredOn      float64  `json:"_occurred_on"`
 	RuleSet         string   `json:"_rule_set"`
 	Severity        int      `json:"_severity"`
 	Tags            []string `json:"_tags"`
@@ -148,11 +147,18 @@ type CnsInvite struct {
 }
 
 type Metric struct {
-	Name   string   `json:"name"`
-	Status string   `json:"status"`
-	Tags   []string `json:"tags"`
-	Type   string   `json:"type"`
-	Units  string   `json:"units"`
+	Active      bool          `json:"_active"`
+	Check       string        `json:"_check"`
+	CheckActive bool          `json:"_check_active"`
+	CheckBundle string        `json:"_check_bundle"`
+	CheckTags   []string      `json:"_check_tags"`
+	CheckUUID   string        `json:"_check_uuid"`
+	Cid         string        `json:"_cid"`
+	Histogram   string        `json:"_histogram"`
+	MetricName  string        `json:"_metric_name"`
+	MetricType  string        `json:"_metric_type"`
+	Tags        []interface{} `json:"tags"`
+	Units       interface{}   `json:"units"`
 }
 
 type Role struct {
@@ -276,12 +282,12 @@ type RuleSet struct {
 	Cid           string `json:"_cid"`
 	Check         string `json:"check"`
 	ContactGroups struct {
-		Num1 []string `json:"1"`
-		Num2 []string `json:"2"`
-		Num3 []string `json:"3"`
-		Num4 []string `json:"4"`
-		Num5 []string `json:"5"`
-	} `json:"contact_groups"`
+			      Num1 []string `json:"1"`
+			      Num2 []string `json:"2"`
+			      Num3 []string `json:"3"`
+			      Num4 []string `json:"4"`
+			      Num5 []string `json:"5"`
+		      } `json:"contact_groups"`
 	Derive     interface{}   `json:"derive"`
 	Link       interface{}   `json:"link"`
 	MetricName string        `json:"metric_name"`
@@ -310,12 +316,12 @@ type Rule struct {
 type RuleSetGroup struct {
 	Cid           string `json:"_cid"`
 	ContactGroups struct {
-		Num1 []string `json:"1"`
-		Num2 []string `json:"2"`
-		Num3 []string `json:"3"`
-		Num4 []string `json:"4"`
-		Num5 []string `json:"5"`
-	} `json:"contact_groups"`
+			      Num1 []string `json:"1"`
+			      Num2 []string `json:"2"`
+			      Num3 []string `json:"3"`
+			      Num4 []string `json:"4"`
+			      Num5 []string `json:"5"`
+		      } `json:"contact_groups"`
 	Formulas []struct {
 		Expression    int `json:"expression"`
 		RaiseSeverity int `json:"raise_severity"`
@@ -377,22 +383,22 @@ type WorkSheet struct {
 type Dashboard struct {
 	Created int `json:"_created"`
 	Options struct {
-		FullscreenHideTitle bool          `json:"fullscreen_hide_title"`
-		TextSize            int           `json:"text_size"`
-		Linkages            []interface{} `json:"linkages"`
-		AccessConfigs       []struct {
-			FullscreenHideTitle bool   `json:"fullscreen_hide_title"`
-			TextSize            int    `json:"text_size"`
-			ScaleText           bool   `json:"scale_text"`
-			Nickname            string `json:"nickname"`
-			BlackDash           bool   `json:"black_dash"`
-			Fullscreen          bool   `json:"fullscreen"`
-			SharedID            string `json:"shared_id"`
-			Enabled             bool   `json:"enabled"`
-		} `json:"access_configs"`
-		ScaleText bool `json:"scale_text"`
-		HideGrid  bool `json:"hide_grid"`
-	} `json:"options"`
+			FullscreenHideTitle bool          `json:"fullscreen_hide_title"`
+			TextSize            int           `json:"text_size"`
+			Linkages            []interface{} `json:"linkages"`
+			AccessConfigs       []struct {
+				FullscreenHideTitle bool   `json:"fullscreen_hide_title"`
+				TextSize            int    `json:"text_size"`
+				ScaleText           bool   `json:"scale_text"`
+				Nickname            string `json:"nickname"`
+				BlackDash           bool   `json:"black_dash"`
+				Fullscreen          bool   `json:"fullscreen"`
+				SharedID            string `json:"shared_id"`
+				Enabled             bool   `json:"enabled"`
+			} `json:"access_configs"`
+			ScaleText bool `json:"scale_text"`
+			HideGrid  bool `json:"hide_grid"`
+		} `json:"options"`
 	Cid            string `json:"_cid"`
 	Shared         bool   `json:"shared"`
 	Active         bool   `json:"_active"`
@@ -400,9 +406,9 @@ type Dashboard struct {
 	DashboardUUID  string `json:"_dashboard_uuid"`
 	AccountDefault bool   `json:"account_default"`
 	GridLayout     struct {
-		Width  int `json:"width"`
-		Height int `json:"height"`
-	} `json:"grid_layout"`
+			Width  int `json:"width"`
+			Height int `json:"height"`
+		} `json:"grid_layout"`
 	CreatedBy    string        `json:"_created_by"`
 	LastModified int           `json:"_last_modified"`
 	Widgets      []interface{} `json:"widgets"`
@@ -416,21 +422,21 @@ type Widget struct {
 	Origin   string  `json:"origin"`
 	Height   float64 `json:"height"`
 	Settings struct {
-		KeyInline  bool   `json:"key_inline"`
-		Period     string `json:"period"`
-		KeySize    string `json:"key_size"`
-		HideYaxis  bool   `json:"hide_yaxis"`
-		GraphID    string `json:"graph_id"`
-		AccountID  string `json:"account_id"`
-		ShowFlags  bool   `json:"show_flags"`
-		DateWindow string `json:"date_window"`
-		HideXaxis  bool   `json:"hide_xaxis"`
-		KeyWrap    bool   `json:"key_wrap"`
-		Label      string `json:"label"`
-		KeyLoc     string `json:"key_loc"`
-		GraphTitle string `json:"_graph_title"`
-		Realtime   bool   `json:"realtime"`
-	} `json:"settings"`
+			 KeyInline  bool   `json:"key_inline"`
+			 Period     string `json:"period"`
+			 KeySize    string `json:"key_size"`
+			 HideYaxis  bool   `json:"hide_yaxis"`
+			 GraphID    string `json:"graph_id"`
+			 AccountID  string `json:"account_id"`
+			 ShowFlags  bool   `json:"show_flags"`
+			 DateWindow string `json:"date_window"`
+			 HideXaxis  bool   `json:"hide_xaxis"`
+			 KeyWrap    bool   `json:"key_wrap"`
+			 Label      string `json:"label"`
+			 KeyLoc     string `json:"key_loc"`
+			 GraphTitle string `json:"_graph_title"`
+			 Realtime   bool   `json:"realtime"`
+		 } `json:"settings"`
 	Type     string `json:"type"`
 	WidgetID string `json:"widget_id"`
 }
@@ -450,21 +456,54 @@ type Worksheet struct {
 	Title string   `json:"title"`
 }
 
-/*
-type Template struct {
-	Cid string `json:"_cid"`
-	LastModified int `json:"_last_modified"`
-	LastModifiedBy string `json:"_last_modified_by"`
-	CheckBundles []struct {
-		BundleID string `json:"bundle_id"`
-		Name string `json:"name"`
-	} `json:"check_bundles"`
-	Hosts []string `json:"hosts"`
-	MasterHost string `json:"master_host"`
-	Name string `json:"name"`
-	Notes interface{} `json:"notes"`
-	Status string `json:"status"`
-	SyncRules bool `json:"sync_rules"`
-	Tags []string `json:"tags"`
+type CaqlData struct {
+	Data []struct {
+		TimeStamp float64   `json:"time_stamp"`
+		DataPoint []float64 `json:"data_point"`
+	} `json:"_data"`
+	End    float64 `json:"_end"`
+	Period float64 `json:"_period"`
+	Query  string  `json:"_query"`
+	Start  float64 `json:"_start"`
 }
-*/
+
+type CheckBundleMetrics struct {
+	Cid     string `json:"_cid"`
+	Metrics []struct {
+		Name   string        `json:"name"`
+		Result string        `json:"result"`
+		Status string        `json:"status"`
+		Tags   []interface{} `json:"tags"`
+		Type   string        `json:"type"`
+		Units  interface{}   `json:"units"`
+	} `json:"metrics"`
+}
+
+type ContactGroup struct {
+	Cid               string  `json:"_cid"`
+	LastModified      float64 `json:"_last_modified"`
+	LastModifiedBy    string  `json:"_last_modified_by"`
+	AggregationWindow float64 `json:"aggregation_window"`
+	AlertFormats      struct {
+				  LongMessage  interface{} `json:"long_message"`
+				  LongSubject  interface{} `json:"long_subject"`
+				  LongSummary  interface{} `json:"long_summary"`
+				  ShortMessage interface{} `json:"short_message"`
+				  ShortSummary interface{} `json:"short_summary"`
+			  } `json:"alert_formats"`
+	Contacts struct {
+				  External []struct {
+					  ContactInfo string `json:"contact_info"`
+					  Method      string `json:"method"`
+				  } `json:"external"`
+				  Users []struct {
+					  ContactInfo string `json:"_contact_info"`
+					  Method      string `json:"method"`
+					  User        string `json:"user"`
+				  } `json:"users"`
+			  } `json:"contacts"`
+	Escalations []interface{} `json:"escalations"`
+	Name        string        `json:"name"`
+	Reminders   []int         `json:"reminders"`
+	Tags        []string      `json:"tags"`
+}

@@ -7,9 +7,9 @@ Go implementation of CLI wrapper for Circonus API (based on the documentation at
 Usage of circli:
   -bundle_removal_action string
         Bundle removal action used with template update actions: possible values are "unbind", "deactivate", "remove"
-        unbind :     Marks the check(s) as unbound from the template, you can then modify them as if they were a "normal" check
-        deactivate : Sets the check(s) as inactive, they will still show up on the interface and you can view historic data for them 
-        remove :     Deletes the check(s) from the system, they will no longer show in the UI and historic data will be gone 
+        unbind :        Marks the check(s) as unbound from the template, you can then modify them as if they were a "normal" check
+        deactivate :    Sets the check(s) as inactive, they will still show up on the interface and you can view historic data for them 
+        remove :        Deletes the check(s) from the system, they will no longer show in the UI and historic data will be gone 
 
   -call string
         Circonus Call Type. Example : get, list, create, update, delete
@@ -19,9 +19,9 @@ Usage of circli:
 
   -host_removal_action string
         Host removal action used with template update actions: possible values are "unbind", "deactivate", "remove"
-        unbind :     Marks the check(s) as unbound from the template, you can then modify them as if they were a "normal" check
-        deactivate : Sets the check(s) as inactive, they will still show up on the interface and you can view historic data for them 
-        remove :     Deletes the check(s) from the system, they will no longer show in the UI and historic data will be gone 
+        unbind :        Marks the check(s) as unbound from the template, you can then modify them as if they were a "normal" check
+        deactivate :    Sets the check(s) as inactive, they will still show up on the interface and you can view historic data for them 
+        remove :        Deletes the check(s) from the system, they will no longer show in the UI and historic data will be gone 
 
   -object string
         Circonus Object Type. Possible object types : 
@@ -29,13 +29,17 @@ Usage of circli:
         alert :         Representation of an Alert that occurred (Readonly) 
         annotation :    Mark important events used for correlation 
         broker :        Remote software agent that collects the data from monitored hosts
+        caql :          Provides a way to extact data from Circonus using a CAQL query
         check :         Individual elements of a check bundle (Readonly)
         check_bundle :  Collection of checks that have the same configuration and target, but collected from different brokers
+        check_bundle_metrics :  Provides a way to add or remove individual metrics under a Check Bundle rather than replacing the entire Check Bundle object
         check_move :    Request that a Check be moved from one Broker to another
+        contact_group : Provides means of being notified about alerts. Each contact_group can have one to many users and means of contact
         data :          Readonly endpoint to pull the values of a single data point for a given time range
         dashboard :     Provides access for creating, reading, updating and deleting Dashboards.
         graph :         Allows mass creation, editing and removal of graphs
         maintenance :   Schedule a maintenance window for your account, check bundle, rule set or host
+        metric :        Provides API access to individual Metrics. Generally readonly but units and tags fields can be updated
         metric_cluster :        A metric cluster is a cluster of metrics defined by a set of queries
         rule_set :      define a collection of rules to apply to a given metric
         rule_set_group :        Allows togroup together rule sets and trigger alerts based on combinations of those rule sets faulting
@@ -52,6 +56,12 @@ Usage of circli:
 ```
 
 ## Circonus CLI (circli) user manual
+#####[Get](https://github.com/misale/circonus-api-go#get-calls) 
+#####[List](https://github.com/misale/circonus-api-go#list-calls)  
+#####[Create](https://github.com/misale/circonus-api-go#create-calls)
+#####[Update](https://github.com/misale/circonus-api-go#update-calls)
+#####[Delete](https://github.com/misale/circonus-api-go#delete-calls) 
+#
 
 ### Get Calls
 Get calls are made to filter/search Circonus API objects using a json formatted where string provided by -where flag or as a file with -file flag. The possible where keys are listed under "Query format" for each type of API object, the 
@@ -60,13 +70,15 @@ values of the where keys can be used in combination for filtering/searching.
 ```
 circli -object <circonus_object_name> -call get [ -where <json_format_where_string> | -file <json_file> ]
 ```
+#
 **account** : basic contact details associated with the account and description
  - **Query format** 
 ```json
- {"account_id":"<account_id_number>"}
+ {"account_id":"<account_id_number>","name":"<account_name>"}
 ```
   - **Query field (key) description**
     - **account_id** : the integer part of the value of _cid in the account API object 
+    - **name** : string value of name in account API object
  - **Example**
 ```json
         [misale]$ circli -object account -call get -where '{"account_id":2317}'
@@ -113,18 +125,22 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
         }
         [misale]$ 
 ```
+#
  **alert** : Representation of an Alert that occurred (Readonly) 
  - **Query format**
 ```json
-    {"alert_id":"<alert_id>" , "severity" : "<alert_severity_num>" , "occurred_on_lt":"<epoch_time_upper_bound>","occurred_on_gt":"<epoch_time_lower_bound>","tags_has":"<tag>" } 
+    {"alert_id":"<alert_id>" ,"check":"<check_id>","metric_name":"<metric_name>", "severity" : "<alert_severity_num>" , "occurred_on_lt":"<epoch_time_upper_bound>","occurred_on_gt":"<epoch_time_lower_bound>","tags_has":"<tag>" } 
 ```
  - **Query field (key) description**
     - **alert_id** : the integer part of the value of _cid in the alert API object 
     - **severity** : the value of _severity in the alert API object
-    - **occurred_on_lt** : upper bound epoch timestamp for _occurred_on
-    - **occurred_on_gt** : lower bound epoch timestamp for _occurred_on 
+    - **check** : integer part of check API object _cid (for filtering alerts by check ID)
+    - **metric_name** : metric name string for filtering alerts associated with a specific metric ("name"+"_"+"check_id")
+    - **occurred_on_lt** : upper bound epoch timestamp for _occurred_on (lt = less than)
+    - **occurred_on_le** : upper bound epoch timestamp for _occurred_on (le = less than or equal to)
+    - **occurred_on_gt** : lower bound epoch timestamp for _occurred_on (gt = greater than)
+    - **occurred_on_ge** : lower bound epoch timestamp for _occurred_on (ge = greater than or equal to)
     - **tags_has** : tag string
-
  - **Example**
 ```json
  [misale]$ circli -object alert -call get -where '{"occurred_on_gt":1460000000,"occurred_on_lt":1470048105}'
@@ -153,6 +169,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
  ]
  [misale]$ 
 ```
+#
 **annotation** : Mark important events used for correlation
  - **Query format**
 ```json
@@ -161,8 +178,14 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   - **Query field (key) description**
     - **annotation_id** : The integer part of the _cid value of annotation API object
     - **category** : The category string of annotation API object
-    - **start_gt** : Lower bound for epoch start timestamp of annotation API object 
-    - **stop_lt** : Upper bound for epoch stop timestamp of annotation API object
+    - **start_gt** : Lower bound (gt = greater than) for epoch start timestamp of annotation API object 
+    - **start_ge** : Lower bound (ge = greater than or equal to) for epoch start timestamp of annotation API object 
+    - **start_lt** : Upper bound (lt = less than) for epoch start timestamp of annotation API object 
+    - **start_le** : Upper bound (le = less than or equal to) for epoch start timestamp of annotation API object 
+    - **stop_lt** : Upper bound (lt = less than) for epoch stop timestamp of annotation API object
+    - **stop_le** : Upper bound (lt = less than or equal to) for epoch stop timestamp of annotation API object
+    - **stop_gt** : Lower bound (gt = greater than) for epoch stop timestamp of annotation API object
+    - **stop_ge** : Lower bound (ge = greater than or equal to) for epoch stop timestamp of annotation API object
  - **Example**
 ```json
   [misale]$ circli -object annotation -call get -where '{"start_gt":1467000000,"stop_lt":1470048105}'
@@ -192,6 +215,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$ 
 ```
+#
 **broker** : Remote software agent that collects the data from monitored hosts
  - **Query format**
 ```json
@@ -280,6 +304,25 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
    ]
    [misale]$ 
 ```
+#
+**caql** : The CAQL API endpoint provides a way to extact data from Circonus using a CAQL query
+ - **Query format**
+```json
+ {"query":"<caql_query>","start":"<start_epoch>","end":"<end_epoch>","period":"<period>"}
+```
+ - **Query field (key) description**
+    - **query** : CAQL query string
+    - **start** : lower bound epoch time (integer) for CAQL query
+    - **end** : upper bound epoch time (integer) for CAQL query
+    - **period** : time period in seconds for data extraction
+ - **Example**
+```
+[misale]$ circli -call get -object caql -where '{"query":"metric:average(\"05ef308d-e19c-6515-9e43-c4fffff51823\",\"sessions\")","start":1478558000,"end":1478559000,"period":60}'
+{"_data":[[1478557980,[1]],[1478558040,[4]],[1478558100,[2]],[1478558160,[3]],[1478558220,[6]],[1478558280,[2]],[1478558340,[5]],[1478558400,[2]],[1478558460,[2]],[1478558520,[3]],[1478558580,[6]],[1478558640,[4]],[1478558700,[4]],[1478558760,
+[6]],[1478558820,[2]],[1478558880,[10]],[1478558940,[3]]],"_start":1478558000,"_end":1478559000,"_query":"metric:average(\"05ef308d-e19c-6515-9e43-c4fffff51823\",\"sessions\")","_period":60}
+[misale]$ 
+```
+#
 **check** : Individual elements of a check bundle (Readonly)
  - **Query format**
 ```json
@@ -306,16 +349,20 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$ 
 ```
+#
 **check_bundle** : Collection of checks that have the same configuration and target, but collected from different brokers
  - **Query format**
 ```json
-  {"bundle_id":"<check_bundle_id>","type":"<check_bundle_type>","target":"<target_host>","display_name":"<display_name>","tags_has":"<tag>","checks_has":"<check_id>","brokers_has":"<broker_id>"} 
+  {"bundle_id":"<check_bundle_id>","type":"<check_bundle_type>","target":"<target_host>","target_like":"<target_string>","display_name":"<display_name>","display_name_like":"<display_name_string>","tags_has":"<tag>","checks_has":"<check_id>",
+  "brokers_has":"<broker_id>"} 
 ```
  - **Query field (key) description**
     - **check_bundle_id** : The integer part of _cid value in check_bundle API object (known check_bundle cid)
     - **type** : The string value of type in check_bundle API object (to list all check bundles that has a specific type field)
     - **target** : The string value of target in check_bundle API object (to list all check bundles that target a particular server)
+    - **target_like** : String pattern of target to filter check_bundles that have target matching the pattern.
     - **display_name** : The string value of display_name in check_bundle API object (to find a check bundle with a particular name)
+    - **display_name_like** : String pattern of display_name to filter check_bundles that have display_name matching the pattern.
     - **tags_has** : String element of the list value of tags in check_bundle API object (to list all check bundles with a particular tag)
     - **checks_has** : Integer part of element of the list value of checks in check_bundle API object (to find a check bundle that has a particular check in it)
     - **brokers_has** : Integer part of element of the list value of brokers in check_bundle API object (to list all check bundles using a particular broker)
@@ -392,6 +439,49 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$ 
 ```
+#
+**check_bundle_metrics** : Provides interface to update/list metrics under a check_bundle.
+ - **Query format**
+```json
+  {"check_bundle_id":"<check_bundle_id>"} 
+```
+ - **Query field (key) description**
+    - **check_bundle_id** : The integer part of _cid value in check_bundle API object (known check_bundle cid)
+ - **Example**
+```json
+[misale]$ circli -call get -object check_bundle_metrics -where '{"check_bundle_id":158234}' 
+{
+        "_cid": "/check_bundle_metrics/158234",
+        "metrics": [
+                {
+                        "name": "cpu`num",
+                        "result": "success",
+                        "status": "active",
+                        "tags": [],
+                        "type": "numeric",
+                        "units": null
+                },
+                {
+                        "name": "mem`pct",
+                        "result": "success",
+                        "status": "active",
+                        "tags": [],
+                        "type": "numeric",
+                        "units": null
+                },
+                {
+                        "name": "status",
+                        "result": "success",
+                        "status": "active",
+                        "tags": [],
+                        "type": "text",
+                        "units": null
+                }
+        ]
+}
+[misale]$ 
+```
+#
 **check_move** : Request that a Check be moved from one Broker to another
  - **Query format**
 ```json
@@ -412,6 +502,63 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
  }
  [misale]$ 
 ```
+#
+**contact_group** : Provides means of being notified about alerts. Each contact_group can have one to many users and means of contact
+ - **Query format**
+```json
+  {"contact_group_id":"<contact_group_id>","name":"<contact_group name>","name_like":"<name string pattern>","tags_has":"<tag_string>"}
+```
+ - **Query field (key) description**
+    - **contact_group_id** : The integer part of the _cid value in a contact_group API object
+    - **name** : String value of name in a contact_group API object
+    - **name_like** : String pattern of name to find all contact_groups with matching name
+    - **tags_has** : Tag string to find contact_groups whose tags list includes this.
+ - **Example**
+```json
+ [misale]$ circli -call get -object contact_group -where '{"contact_group_id":1234}'
+ {
+         "_cid": "/contact_group/1234",
+         "_last_modified": 1.465402911e+09,
+         "_last_modified_by": "/user/1007",
+         "aggregation_window": 300,
+         "alert_formats": {
+                 "long_message": null,
+                 "long_subject": null,
+                 "long_summary": null,
+                 "short_message": null,
+                 "short_summary": null
+         },
+         "contacts": {
+                 "external": [
+                         {
+                                 "contact_info": "slack://slack.com?token=xoxb-88888888888-FFFFFjqryFFFFFFFFFFFFF2v\u0026channel=D1F5FFFF4\u0026username=circonus_o_matic",
+                                 "method": "slack"
+                         }
+                 ],
+                 "users": []
+         },
+         "escalations": [
+                 null,
+                 null,
+                 null,
+                 null,
+                 null
+         ],
+         "name": "testGroup",
+         "reminders": [
+                 0,
+                 0,
+                 0,
+                 0,
+                 300
+         ],
+         "tags": [
+                 "service:test"
+         ]
+ }
+ [misale]$ 
+```
+#
 **dashboard** : Provides API access for creating, reading, updating and deleting Dashboards
   - **Query format**
 ```json
@@ -425,7 +572,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
 ```json
   [misale]$ circli -object dashboard -call get -where '{"title_like":"Fancy*"}'
   [
-          {
+          { 
                   "_created": 1472738070,
                   "options": {
                           "fullscreen_hide_title": false,
@@ -525,6 +672,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$ 
 ```
+#
 **data** : Readonly endpoint to pull the values of a single data point for a given time range
  - **Query format**
 ```json
@@ -600,6 +748,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$  
 ```
+#
 **graph** : Allows mass creation, editing and removal of graphs
  - **Query format** 
 ```json
@@ -671,6 +820,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   }
   [misale]$ 
 ```
+#
 **maintenance** : Schedule a maintenance window for your account, check bundle, rule set or host
  - **Query format**
 ```json
@@ -679,10 +829,13 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
  - **Query field (key) description** 
     - **maintenance_id** : Integer part of the value of _cid in maintenance API object
     - **item** : String value of item in maintenance API object
+    - **item_like** : Item string pattern to find maintenance API objects with matching item values 
     - **tags_has** : Tag string to search maintenance API objects that have matching tag
-    - **start_ge** : Integer lower bound for the value of start in maintenance API object (maintenance time window filtering)
-    - **stop_le** : Integer upper bound for the value if stop in maintenance API object (maubtenance time window filtering)
-    - **type** : String value of type in maintenance API object 
+    - **start_ge** : Integer lower bound for the value of start in maintenance API object (ge = greater than or equal to)
+    - **start_gt** : Integer lower bound for the value of start in maintenance API object (gt = greater than)
+    - **stop_le** : Integer upper bound for the value if stop in maintenance API object (le = less than or equal to)
+    - **stop_lt** : Integer upper bound for the value if stop in maintenance API object (lt = less than )
+    - **type** : String value of type in maintenance API object
  - **Example**
 ```json
   [misale]$ circli -object maintenance -call get -where '{"maintenance_id":66799}'
@@ -706,6 +859,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   }
   [misale]$ 
 ```
+#
 **metric_cluster** : A metric cluster is a cluster of metrics defined by a set of queries
  - **Query format**
 ```json
@@ -762,6 +916,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$ 
 ```
+#
 **rule_set** : define a collection of rules to apply to a given metric
  - **Query format**
 ```json
@@ -845,6 +1000,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$ 
 ```
+#
 **rule_set_group** : Allows togroup together rule sets and trigger alerts based on combinations of those rule sets faulting
  - **Query format**
 ```json
@@ -900,6 +1056,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$ 
 ```
+#
 **tags** : List all tags in use in your account (don't have any fields, Readonly)
  - **Query format**
 ```json
@@ -915,6 +1072,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
  }
  [misale]$ 
 ```
+#
 **template** : A means to setup a mass number of checks quickly through both the API and UI
  - **Query format**
 ```json
@@ -956,6 +1114,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$
 ```
+#
 **user** : Get basic information about the users on your account or a single user
  - **Query format**
 ```json
@@ -983,6 +1142,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$ 
 ```
+#
 **worksheet** : Collection of graphs and allow quick correlation across them
  - **Query format**
 ```json
@@ -1021,7 +1181,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   ]
   [misale]$ 
 ```
-
+#
 ### List Calls
 List calls are made to get the complete listing of all objects of a given type. 
 #### CLI Syntax
@@ -1070,7 +1230,7 @@ Possible Object Types : account, alert, annotation, broker, check, check_bundle,
 [misale]$ 
 
 ```
-
+#
 ### Create Calls
 #### CLI Syntax
 ```
@@ -1189,7 +1349,7 @@ circli -object <object_type> -call create [-where <json_string> | -file <json_fi
 }
 [misale]$ 
 ```
-
+#
 ### Update Calls
 #### CLI Syntax
 ```
@@ -1332,7 +1492,7 @@ circli -object <object_type> -call update -oid <object_id> [-where <json_string>
 }
 [misale]$
 ```
-
+#
 ### Delete Calls
 #### CLI Syntax
 ```

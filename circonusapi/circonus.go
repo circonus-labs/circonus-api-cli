@@ -1,7 +1,5 @@
-// Copyright 2016 Alem Abreha. All rights reserved.
-// Use of this source code is governed by a MIT
-// license that can be found in the LICENSE file.
-
+// Copyright 2016 Alem Abreha <alem.abreha@gmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT license that can be found in the LICENSE file.
 package circonusapi
 
 import (
@@ -49,7 +47,6 @@ func GetCns(filter interface{}, object string) ([]byte, error) {
 		os.Exit(251)
 	}
 	result, err := CirconusCall(URL, "GET", nil)
-
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -191,7 +188,10 @@ func UrlMaker(item string, filter interface{}) (string, error) {
 	case "account":
 		account_filter := filter.(AccountFilter)
 		if account_filter.AccountID == 0 {
-			url = CirconusURL + "account"
+			url = CirconusURL + "account?"
+			if account_filter.Name != "" {
+				url += "f_name=" + custom_url.QueryEscape(account_filter.Name) + "&"
+			}
 		} else {
 			url = CirconusURL + "account/" + strconv.FormatFloat(account_filter.AccountID, 'f', -1, 64)
 		}
@@ -212,6 +212,18 @@ func UrlMaker(item string, filter interface{}) (string, error) {
 			}
 			if alert_filter.Severity != 0 {
 				url += "f__severity=" + strconv.FormatFloat(alert_filter.Severity, 'f', -1, 64) + "&"
+			}
+			if alert_filter.Check != 0 {
+				url += "f__check=/check/" + strconv.FormatFloat(alert_filter.Check, 'f', -1, 64) + "&"
+			}
+			if alert_filter.MetricName != "" {
+				url += "f__metric_name=" + custom_url.QueryEscape(alert_filter.MetricName) + "&"
+			}
+			if alert_filter.OccurredOnLe != 0 {
+				url += "f__occurred_on_le=" + strconv.FormatFloat(alert_filter.OccurredOnLe, 'f', -1, 64) + "&"
+			}
+			if alert_filter.OccurredOnGe != 0 {
+				url += "f__occurred_on_ge=" + strconv.FormatFloat(alert_filter.OccurredOnGe, 'f', -1, 64) + "&"
 			}
 		}
 	case "user":
@@ -240,13 +252,39 @@ func UrlMaker(item string, filter interface{}) (string, error) {
 			if annotation_filter.Category != "" {
 				url += "f_category=" + annotation_filter.Category + "&"
 			}
+			if annotation_filter.CategoryWildcard != "" {
+				url += "f_category_wildcard=*" + custom_url.QueryEscape(annotation_filter.CategoryWildcard) + "*&"
+			}
+			if annotation_filter.Description != "" {
+				url += "f_description=" + custom_url.QueryEscape(annotation_filter.Description) + "&"
+			}
+			if annotation_filter.DescriptionWildcard != "" {
+				url += "f_description_wildcard=*" + custom_url.QueryEscape(annotation_filter.DescriptionWildcard) + "*&"
+			}
 			if annotation_filter.StartGt != 0 {
-				url += "f_start_ge=" + strconv.FormatFloat(annotation_filter.StartGt, 'f', -1, 64) + "&"
+				url += "f_start_gt=" + strconv.FormatFloat(annotation_filter.StartGt, 'f', -1, 64) + "&"
+			}
+			if annotation_filter.StartGe != 0 {
+				url += "f_start_ge=" + strconv.FormatFloat(annotation_filter.StartGe, 'f', -1, 64) + "&"
+			}
+			if annotation_filter.StartLe != 0 {
+				url += "f_start_le=" + strconv.FormatFloat(annotation_filter.StartLe, 'f', -1, 64) + "&"
+			}
+			if annotation_filter.StartLt != 0 {
+				url += "f_start_lt=" + strconv.FormatFloat(annotation_filter.StartLt, 'f', -1, 64) + "&"
 			}
 			if annotation_filter.StopLt != 0 {
 				url += "f_stop_lt=" + strconv.FormatFloat(annotation_filter.StopLt, 'f', -1, 64) + "&"
 			}
-
+			if annotation_filter.StopLe != 0 {
+				url += "f_stop_le=" + strconv.FormatFloat(annotation_filter.StopLe, 'f', -1, 64) + "&"
+			}
+			if annotation_filter.StopGe != 0 {
+				url += "f_stop_ge=" + strconv.FormatFloat(annotation_filter.StopGe, 'f', -1, 64) + "&"
+			}
+			if annotation_filter.StopGt != 0 {
+				url += "f_stop_gt=" + strconv.FormatFloat(annotation_filter.StopGt, 'f', -1, 64) + "&"
+			}
 		}
 
 	case "check":
@@ -285,9 +323,20 @@ func UrlMaker(item string, filter interface{}) (string, error) {
 			if bundle_filter.Type != "" {
 				url += "f_type=" + bundle_filter.Type + "&"
 			}
+			if bundle_filter.TargetLike != "" {
+				url += "f_target_wildcard=*" + custom_url.QueryEscape(bundle_filter.TargetLike) + "*&"
+			}
+			if bundle_filter.DisplayNameLike != "" {
+				url += "f_display_name_wildcard=*" + custom_url.QueryEscape(bundle_filter.DisplayNameLike) + "*&"
+			}
 		} else {
 			url = CirconusURL + "check_bundle/" + strconv.FormatFloat(bundle_filter.CheckBundleID, 'f', -1, 64)
 		}
+
+	case "check_bundle_metrics":
+		check_bundle_metrics_filter := filter.(CheckBundleMetricsFilter)
+		url = CirconusURL + "check_bundle_metrics/" + strconv.FormatFloat(check_bundle_metrics_filter.CheckBundleId, 'f', -1, 64)
+
 	case "broker":
 		broker_filter := filter.(BrokerFilter)
 		if broker_filter.BrokerID != 0 {
@@ -301,6 +350,7 @@ func UrlMaker(item string, filter interface{}) (string, error) {
 				url += "f__type=" + broker_filter.Type + "&"
 			}
 		}
+
 	case "checkmove":
 		checkmove_filter := filter.(CheckMoveFilter)
 		if checkmove_filter.CheckMoveID != 0 {
@@ -309,11 +359,23 @@ func UrlMaker(item string, filter interface{}) (string, error) {
 			url = CirconusURL + "check_move"
 		}
 
-		//url = CirconusURL + "annotation?" + "f_category=" + annotation_filter.Category +
-		//"&f_start_ge=" + strconv.FormatFloat(annotation_filter.Start, 'f', -1, 64) +
-		//"&f_stop_lt=" + strconv.FormatFloat(annotation_filter.Stop, 'f', -1, 64)
+	case "contact_group":
+		contact_group_filter := filter.(ContactGroupFilter)
+		if contact_group_filter.ContactGroupId != 0 {
+			url = CirconusURL + "contact_group/" + strconv.FormatFloat(contact_group_filter.ContactGroupId, 'f', -1, 64)
+		} else {
+			url = CirconusURL + "contact_group?"
+			if contact_group_filter.Name != "" {
+				url += "f_name=" + custom_url.QueryEscape(contact_group_filter.Name) + "&"
+			}
+			if contact_group_filter.NameLike != "" {
+				url += "f_name_wildcard=*" + custom_url.QueryEscape(contact_group_filter.NameLike) + "*&"
+			}
+			if contact_group_filter.TagsHas != "" {
+				url += "f_tags_has=" + custom_url.QueryEscape(contact_group_filter.TagsHas) + "&"
+			}
+		}
 
-		//url = CirconusURL + "user/" + strconv.FormatFloat(filter.(UserFilter).UserID, 'f', -
 	case "data":
 		data_filter := filter.(DataFilter)
 		url = CirconusURL + "data/" + strconv.FormatFloat(data_filter.CheckId, 'f', -1, 64) + "_" + custom_url.QueryEscape(data_filter.MetricName) +
@@ -368,12 +430,46 @@ func UrlMaker(item string, filter interface{}) (string, error) {
 		} else {
 			url = CirconusURL + "metric_cluster/" + strconv.FormatFloat(metriccluster_filter.MetricClusterID, 'f', -1, 64) + "?extra=_matching_metrics"
 		}
+
+	case "metric":
+		metric_filter := filter.(MetricFilter)
+		if metric_filter.MetricID == "" {
+			url = CirconusURL + "metric?"
+			if metric_filter.CheckBundleID != "" {
+				url += "f__check_bundle=/check_bundle/" + custom_url.QueryEscape(metric_filter.CheckBundleID) + "&"
+			}
+			if metric_filter.CheckID != "" {
+				url += "f__check=/check/" + custom_url.QueryEscape(metric_filter.CheckID) + "&"
+			}
+			if metric_filter.CheckUuid != "" {
+				url += "f__check_uuid=" + custom_url.QueryEscape(metric_filter.CheckUuid) + "&"
+			}
+			if metric_filter.Name != "" {
+				url += "f__metric_name=" + custom_url.QueryEscape(metric_filter.Name) + "&"
+			}
+			if metric_filter.NameWildcard != "" {
+				url += "f__metric_name_wildcard=*" + custom_url.QueryEscape(metric_filter.NameWildcard) + "*&"
+			}
+			if metric_filter.TagsHas != "" {
+				url += "f_tags_has=" + custom_url.QueryEscape(metric_filter.TagsHas) + "&"
+			}
+			if metric_filter.CheckTagsHas != "" {
+				url += "f__check_tags_has=" + custom_url.QueryEscape(metric_filter.CheckTagsHas) + "&"
+			}
+
+		} else {
+			url = CirconusURL + "metric/" + custom_url.QueryEscape(metric_filter.MetricID)
+		}
+
 	case "maintenance":
 		maintenance_filter := filter.(MaintenanceFilter)
 		if maintenance_filter.MaintenanceID == 0 {
 			url = CirconusURL + "maintenance?"
 			if maintenance_filter.Item != "" {
 				url += "f_item=" + custom_url.QueryEscape(maintenance_filter.Item) + "&"
+			}
+			if maintenance_filter.ItemLike != "" {
+				url += "f_item_wildcard=*" + custom_url.QueryEscape(maintenance_filter.ItemLike) + "*&"
 			}
 			if maintenance_filter.Type != "" {
 				url += "f_type=" + custom_url.QueryEscape(maintenance_filter.Type) + "&"
@@ -384,8 +480,14 @@ func UrlMaker(item string, filter interface{}) (string, error) {
 			if maintenance_filter.StartGe != 0 {
 				url += "f_start_ge=" + strconv.FormatFloat(maintenance_filter.StartGe, 'f', -1, 64) + "&"
 			}
+			if maintenance_filter.StartGt != 0 {
+				url += "f_start_gt=" + strconv.FormatFloat(maintenance_filter.StartGt, 'f', -1, 64) + "&"
+			}
 			if maintenance_filter.StopLe != 0 {
 				url += "f_stop_le=" + strconv.FormatFloat(maintenance_filter.StopLe, 'f', -1, 64) + "&"
+			}
+			if maintenance_filter.StopLt != 0 {
+				url += "f_stop_lt=" + strconv.FormatFloat(maintenance_filter.StopLt, 'f', -1, 64) + "&"
 			}
 		} else {
 			url = CirconusURL + "maintenance/" + strconv.FormatFloat(maintenance_filter.MaintenanceID, 'f', -1, 64)
@@ -455,7 +557,10 @@ func UrlMaker(item string, filter interface{}) (string, error) {
 		} else {
 			url = CirconusURL + "template/" + strconv.FormatFloat(template_filter.TemplateId, 'f', -1, 64)
 		}
-
+	case "caql":
+		caql_filter := filter.(CaqlDataFilter)
+		url = CirconusURL + "caql?query=" + custom_url.QueryEscape(caql_filter.Query) + "&start=" + strconv.FormatFloat(caql_filter.Start, 'f', -1, 64) +
+			"&end=" + strconv.FormatFloat(caql_filter.End, 'f', -1, 64) + "&period=" + strconv.FormatFloat(caql_filter.Period, 'f', -1, 64)
 	default:
 		url = CirconusURL
 	}

@@ -1,6 +1,5 @@
-// Copyright 2016 Alem Abreha. All rights reserved.
-// Use of this source code is governed by a MIT
-// license that can be found in the LICENSE file.
+// Copyright 2016 Alem Abreha <alem.abreha@gmail.com>. All rights reserved.
+// Use of this source code is governed by a MIT license that can be found in the LICENSE file.
 package main
 
 import (
@@ -19,16 +18,23 @@ var object = flag.String("object", "", "Circonus Object Type. Possible object ty
 	"\talert :\t\tRepresentation of an Alert that occurred (Readonly) \n"+
 	"\tannotation :\tMark important events used for correlation \n"+
 	"\tbroker :\tRemote software agent that collects the data from monitored hosts\n"+
+	"\tcaql :\t\tProvides a way to extact data from Circonus using a CAQL query\n"+
 	"\tcheck :\t\tIndividual elements of a check bundle (Readonly)\n"+
 	"\tcheck_bundle :\tCollection of checks that have the same configuration and target, but "+
 	"collected from different brokers\n"+
+	"\tcheck_bundle_metrics :\tProvides a way to add or remove individual metrics under a Check "+
+	"Bundle rather than replacing the entire Check Bundle object\n"+
 	"\tcheck_move :\tRequest that a Check be moved from one Broker to another\n"+
+	"\tcontact_group :\tProvides means of being notified about alerts. Each contact_group can have "+
+	"one to many users and means of contact\n"+
 	"\tdata :\t\tReadonly endpoint to pull the values of a single data point for a given time "+
 	"range\n"+
 	"\tdashboard :\tProvides access for creating, reading, updating and deleting Dashboards.\n"+
 	"\tgraph :\t\tAllows mass creation, editing and removal of graphs\n"+
 	"\tmaintenance :\tSchedule a maintenance window for your account, check bundle, rule set "+
 	"or host\n"+
+	"\tmetric :\tProvides API access to individual Metrics. Generally readonly but units and tags"+
+	" fields can be updated\n"+
 	"\tmetric_cluster :\tA metric cluster is a cluster of metrics defined by a set of queries\n"+
 	"\trule_set :\tdefine a collection of rules to apply to a given metric\n"+
 	"\trule_set_group :\tAllows togroup together rule sets and trigger alerts based on "+
@@ -51,12 +57,18 @@ var bundle_removal_action = flag.String("bundle_removal_action", "", "Bundle rem
 	"\tdeactivate :\tSets the check(s) as inactive, they will still show up on the interface and you can view historic data for them \n"+
 	"\tremove :\tDeletes the check(s) from the system, they will no longer show in the UI and historic data will be gone \n")
 
+//
+// TBD - add optional flags to pass app_name, api_token and api_url from CLI
+//
+//var app_name = flag.String("APP_NAME",circonusapi.AppName,"Circonus account name (optional to override default app_name)")
+//var api_token = flag.String("API_TOKEN",circonusapi.Token,"Circonus API Token (optional to override default api_token)")
+//var api_url = flag.String("API_URL",circonusapi.CirconusURL,"Circonus API URL (optional to override default api_url)")
 func main() {
 	flag.Parse()
 	//user commandline input sanity check
 	if *where == "" && *file == "" && *call != "list" && *call != "delete" {
 		log.Fatal("circli needs either where JSON string with -where flag or JSON file " +
-			"with the -file flag")
+			"with the -file flag**")
 	}
 	//lookup is either where JSON string or contents of JSON file
 	var lookup string
@@ -123,8 +135,6 @@ func main() {
 				}
 			}
 
-		/*
-		 */
 		case "alert":
 			var alert_filter circonusapi.AlertFilter
 			err := json.Unmarshal([]byte(lookup), &alert_filter)
@@ -224,6 +234,29 @@ func main() {
 				}
 			}
 
+		case "caql":
+			var caqldata_filter circonusapi.CaqlDataFilter
+			err := json.Unmarshal([]byte(lookup), &caqldata_filter)
+			// nil_caqldata_filter for verifying unmarshalling
+			nil_caqldata_filter := circonusapi.CaqlDataFilter{}
+
+			if err != nil {
+				log.Fatal(err)
+
+			} else {
+				if caqldata_filter == nil_caqldata_filter {
+					log.Fatal("The Value of -where string or -file content "+
+						"flag is not properly formatted : \n", lookup, "\n")
+				} else {
+					result, err := circonusapi.GetCns(caqldata_filter, "caql")
+					if err != nil {
+						log.Fatal("data get call failure ", err)
+					} else {
+						fmt.Println(string(result))
+					}
+				}
+			}
+
 		case "check":
 			var check_filter circonusapi.CheckFilter
 			err := json.Unmarshal([]byte(lookup), &check_filter)
@@ -290,6 +323,36 @@ func main() {
 				}
 			}
 
+		case "check_bundle_metrics":
+			var checkbundlemetrics_filter circonusapi.CheckBundleMetricsFilter
+			err := json.Unmarshal([]byte(lookup), &checkbundlemetrics_filter)
+			// nil_checkbundlemetrics for verifying unmarshalling
+			nil_checkbundlemetrics := circonusapi.CheckBundleMetricsFilter{}
+
+			if err != nil {
+				log.Fatal(err)
+
+			} else {
+				if checkbundlemetrics_filter == nil_checkbundlemetrics {
+					log.Fatal("The Value of -where string or -file content "+
+						"flag is not properly formatted : \n", lookup, "\n")
+				} else {
+					result, err := circonusapi.GetCns(checkbundlemetrics_filter, "check_bundle_metrics")
+					if err != nil {
+						log.Fatal("check_bundle_metrics get call failure ", err)
+					} else {
+						if checkbundlemetrics_filter.CheckBundleId == 0 {
+							log.Fatal("check_bundle ID is not valid, check_bundle_id = 0")
+						} else {
+							var data circonusapi.CheckBundleMetrics
+							json.Unmarshal(result, &data)
+							rendered_data, _ := json.MarshalIndent(data, "", "\t")
+							fmt.Println(string(rendered_data))
+						}
+					}
+				}
+			}
+
 		case "check_move":
 			var checkmove_filter circonusapi.CheckMoveFilter
 			err := json.Unmarshal([]byte(lookup), &checkmove_filter)
@@ -315,6 +378,39 @@ func main() {
 							fmt.Println(string(rendered_data))
 						} else {
 							var data circonusapi.CheckMove
+							json.Unmarshal(result, &data)
+							rendered_data, _ := json.MarshalIndent(data, "", "\t")
+							fmt.Println(string(rendered_data))
+						}
+					}
+				}
+			}
+
+		case "contact_group":
+			var contact_group_filter circonusapi.ContactGroupFilter
+			err := json.Unmarshal([]byte(lookup), &contact_group_filter)
+			// nil_contact_group for verifying unmarshalling
+			nil_contact_group := circonusapi.ContactGroupFilter{}
+
+			if err != nil {
+				log.Fatal(err)
+
+			} else {
+				if contact_group_filter == nil_contact_group {
+					log.Fatal("The Value of -where string or -file content "+
+						"flag is not properly formatted : \n", lookup, "\n")
+				} else {
+					result, err := circonusapi.GetCns(contact_group_filter, "contact_group")
+					if err != nil {
+						log.Fatal("contact_group get call failure ", err)
+					} else {
+						if contact_group_filter.ContactGroupId == 0 {
+							var data []circonusapi.ContactGroup
+							json.Unmarshal(result, &data)
+							rendered_data, _ := json.MarshalIndent(data, "", "\t")
+							fmt.Println(string(rendered_data))
+						} else {
+							var data circonusapi.ContactGroup
 							json.Unmarshal(result, &data)
 							rendered_data, _ := json.MarshalIndent(data, "", "\t")
 							fmt.Println(string(rendered_data))
@@ -475,6 +571,40 @@ func main() {
 					}
 				}
 			}
+
+		case "metric":
+			var metric_filter circonusapi.MetricFilter
+			err := json.Unmarshal([]byte(lookup), &metric_filter)
+			// nil_metric for verifying unmarshalling
+			nil_metric := circonusapi.MetricFilter{}
+
+			if err != nil {
+				log.Fatal(err)
+
+			} else {
+				if metric_filter == nil_metric {
+					log.Fatal("The Value of -where string or -file content "+
+						"flag is not properly formatted : \n", lookup, "\n")
+				} else {
+					result, err := circonusapi.GetCns(metric_filter, "metric")
+					if err != nil {
+						log.Fatal("metric get call failure ", err)
+					} else {
+						if metric_filter.MetricID == "" {
+							var data []circonusapi.Metric
+							json.Unmarshal(result, &data)
+							rendered_data, _ := json.MarshalIndent(data, "", "\t")
+							fmt.Println(string(rendered_data))
+						} else {
+							var data circonusapi.Metric
+							json.Unmarshal(result, &data)
+							rendered_data, _ := json.MarshalIndent(data, "", "\t")
+							fmt.Println(string(rendered_data))
+						}
+					}
+				}
+			}
+
 		case "rule_set":
 			var ruleset_filter circonusapi.RuleSetFilter
 			err := json.Unmarshal([]byte(lookup), &ruleset_filter)
@@ -715,6 +845,8 @@ func main() {
 				rendered_data, _ := json.MarshalIndent(data, "", "\t")
 				fmt.Println(string(rendered_data))
 			}
+		case "caql":
+			log.Fatal("The CAQL API endpoint provides a way to extact data from Circonus using a CAQL query")
 		case "check":
 			result, err := circonusapi.GetCns(circonusapi.CheckFilter{}, "check")
 			if err != nil {
@@ -735,12 +867,25 @@ func main() {
 				rendered_data, _ := json.MarshalIndent(data, "", "\t")
 				fmt.Println(string(rendered_data))
 			}
+		case "check_bundle_metrics":
+			log.Fatal("check_bundle_metrics is used for adding or removing individual metrics under a Check Bundle" +
+				" rather than replacing the entire Check Bundle object.(with -update flag)")
 		case "check_move":
 			result, err := circonusapi.GetCns(circonusapi.CheckMoveFilter{}, "check_move")
 			if err != nil {
 				log.Fatal("check_move list call failure ", err)
 			} else {
 				var data []circonusapi.CheckMove
+				json.Unmarshal(result, &data)
+				rendered_data, _ := json.MarshalIndent(data, "", "\t")
+				fmt.Println(string(rendered_data))
+			}
+		case "contact_group":
+			result, err := circonusapi.GetCns(circonusapi.ContactGroupFilter{}, "contact_group")
+			if err != nil {
+				log.Fatal("contact_group list call failure ", err)
+			} else {
+				var data []circonusapi.ContactGroup
 				json.Unmarshal(result, &data)
 				rendered_data, _ := json.MarshalIndent(data, "", "\t")
 				fmt.Println(string(rendered_data))
@@ -792,6 +937,17 @@ func main() {
 				log.Fatal("metric_cluster list call failure ", err)
 			} else {
 				var data []circonusapi.MetricCluster
+				json.Unmarshal(result, &data)
+				rendered_data, _ := json.MarshalIndent(data, "", "\t")
+				fmt.Println(string(rendered_data))
+			}
+		case "metric":
+			result, err := circonusapi.GetCns(circonusapi.MetricFilter{}, "metric")
+			//fmt.Println(result)
+			if err != nil {
+				log.Fatal("metric list call failure ", err)
+			} else {
+				var data []circonusapi.Metric
 				json.Unmarshal(result, &data)
 				rendered_data, _ := json.MarshalIndent(data, "", "\t")
 				fmt.Println(string(rendered_data))
@@ -894,6 +1050,8 @@ func main() {
 		case "broker":
 			log.Fatal("You can't modify (or for that matter create or delete brokers) with " +
 				"the API. Please use the web interface for this functionality ")
+		case "caql":
+			log.Fatal("The CAQL API endpoint provides a way to extact data from Circonus using a CAQL query")
 		case "check":
 			log.Fatal("Checks are read only, to make a change to one you must change to all the " +
 				"checks in a bundle, so any modifications should be done to the check_bundle endpoint")
@@ -918,6 +1076,10 @@ func main() {
 				}
 			}
 
+		case "check_bundle_metrics":
+			log.Fatal("check_bundle_metrics is used for adding or removing individual metrics under a Check Bundle" +
+				" rather than replacing the entire Check Bundle object.(with -update flag)")
+
 		case "check_move":
 			result, err := circonusapi.CreateCns([]byte(lookup), "check_move")
 			if err != nil {
@@ -938,6 +1100,28 @@ func main() {
 					}
 				}
 			}
+
+		case "contact_group":
+			result, err := circonusapi.CreateCns([]byte(lookup), "contact_group")
+			if err != nil {
+				log.Fatal("contact_group create call error ", err)
+			} else {
+				var rendered_data bytes.Buffer
+				err := json.Indent(&rendered_data, result, "", "\t")
+				if err != nil {
+					log.Fatal(err)
+				} else {
+					var new_contact_group circonusapi.ContactGroup
+					json.Unmarshal([]byte(rendered_data.String()), &new_contact_group)
+					if new_contact_group.Cid != "" {
+						fmt.Println(rendered_data.String())
+					} else {
+						fmt.Println("contact_group creation failed")
+						log.Fatal(rendered_data.String())
+					}
+				}
+			}
+
 		case "data":
 			log.Fatal("Data points are Readonly, cannot create new data point through" +
 				" the Data API endpoint")
@@ -1021,6 +1205,8 @@ func main() {
 					}
 				}
 			}
+		case "metric":
+			log.Fatal("Metrics are created and deleted automatically by creating and deleting Checks in the Circonus system")
 		case "rule_set":
 			result, err := circonusapi.CreateCns([]byte(lookup), "rule_set")
 			if err != nil {
@@ -1143,7 +1329,8 @@ func main() {
 		case "broker":
 			log.Fatal("You can't modify (or for that matter create or delete brokers) " +
 				"with the API. Please use the web interface for this functionality ")
-
+		case "caql":
+			log.Fatal("The CAQL API endpoint provides a way to extact data from Circonus using a CAQL query")
 		case "check":
 			log.Fatal("Checks are Readonly, cannot update Checks through the " +
 				"Check API endpoint")
@@ -1160,10 +1347,36 @@ func main() {
 					fmt.Println(rendered_data.String())
 				}
 			}
+		case "check_bundle_metrics":
+			result, err := circonusapi.UpdateCns(*oid, "check_bundle_metrics", []byte(lookup))
+			if err != nil {
+				log.Fatal("check_bundle_metrics update call error ", err)
+			} else {
+				var rendered_data bytes.Buffer
+				err := json.Indent(&rendered_data, result, "", "\t")
+				if err != nil {
+					log.Fatal(err)
+				} else {
+					fmt.Println(rendered_data.String())
+				}
+			}
 		case "check_move":
 			result, err := circonusapi.UpdateCns(*oid, "check_move", []byte(lookup))
 			if err != nil {
 				log.Fatal("check_move update call error ", err)
+			} else {
+				var rendered_data bytes.Buffer
+				err := json.Indent(&rendered_data, result, "", "\t")
+				if err != nil {
+					log.Fatal(err)
+				} else {
+					fmt.Println(rendered_data.String())
+				}
+			}
+		case "contact_group":
+			result, err := circonusapi.UpdateCns(*oid, "contact_group", []byte(lookup))
+			if err != nil {
+				log.Fatal("contact_group update call error ", err)
 			} else {
 				var rendered_data bytes.Buffer
 				err := json.Indent(&rendered_data, result, "", "\t")
@@ -1219,6 +1432,19 @@ func main() {
 			result, err := circonusapi.UpdateCns(*oid, "metric_cluster", []byte(lookup))
 			if err != nil {
 				log.Fatal("metric_cluster update call error ", err)
+			} else {
+				var rendered_data bytes.Buffer
+				err := json.Indent(&rendered_data, result, "", "\t")
+				if err != nil {
+					log.Fatal(err)
+				} else {
+					fmt.Println(rendered_data.String())
+				}
+			}
+		case "metric":
+			result, err := circonusapi.UpdateCns(*oid, "metric", []byte(lookup))
+			if err != nil {
+				log.Fatal("metric update call error ", err)
 			} else {
 				var rendered_data bytes.Buffer
 				err := json.Indent(&rendered_data, result, "", "\t")
@@ -1314,6 +1540,8 @@ func main() {
 			}
 		case "broker":
 			log.Fatal("You can't modify (or for that matter create or delete brokers) with the API. Please use the web interface for this functionality ")
+		case "caql":
+			log.Fatal("The CAQL API endpoint provides a way to extact data from Circonus using a CAQL query")
 		case "check":
 			log.Fatal("Checks are Readonly, cannot delete a Check through the " +
 				"Check API endpoint")
@@ -1326,6 +1554,9 @@ func main() {
 				log.Println("check_bundle delete : ", *oid, string(result))
 			}
 			log.Println("You cannot completely remove check bundles from the system, this sets the check_bundle status to disabled and hides the check_bundle from API listing and UI")
+		case "check_bundle_metrics":
+			log.Fatal("check_bundle_metrics is used for adding or removing individual metrics under a Check Bundle" +
+				" rather than replacing the entire Check Bundle object.(with -update flag)")
 		case "check_move":
 			result, err := circonusapi.DeleteCns(*oid, "check_move")
 			if err != nil {
@@ -1333,6 +1564,14 @@ func main() {
 			}
 			if result != nil {
 				log.Println("check_move delete : ", *oid, string(result))
+			}
+		case "contact_group":
+			result, err := circonusapi.DeleteCns(*oid, "contact_group")
+			if err != nil {
+				log.Fatal("Delete call errored : \n", err)
+			}
+			if result != nil {
+				log.Println("contact_group delete : ", *oid, string(result))
 			}
 		case "data":
 			log.Fatal("Data points are Readonly, cannot delete a data point through" +
@@ -1370,6 +1609,8 @@ func main() {
 			if result != nil {
 				log.Println("metric_cluster delete : ", *oid, string(result))
 			}
+		case "metric":
+			log.Fatal("Metrics are created and deleted automatically by creating and deleting Checks in the Circonus system")
 		case "rule_set":
 			result, err := circonusapi.DeleteCns(*oid, "rule_set")
 			if err != nil {
