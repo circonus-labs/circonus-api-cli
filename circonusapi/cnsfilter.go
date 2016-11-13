@@ -2,6 +2,8 @@
 // Use of this source code is governed by a MIT license that can be found in the LICENSE file.
 package circonusapi
 
+//structs used for filtering API objects
+
 type AnnotationFilter struct {
 	AnnotationID        float64 `json:"annotation_id"`
 	Description         string  `json:"description"`

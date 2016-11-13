@@ -1,6 +1,23 @@
 # Circonus CLI (circli) 
 Go implementation of CLI wrapper for Circonus API (based on the documentation at https://login.circonus.com/resources/api)
 
+## Building CLI Binary
+- Update Circonus API endpoint settings(Token,CirconusURL and AppName) in **circonusapi/endpoint.go** 
+```go
+package circonusapi
+
+const (
+	Token       = "ffffffff-ffff-ffff-ffff-ffffffffffff"
+	CirconusURL = "https://api.circonus.com/v2/"
+	Accept      = "application/json"
+	ContentType = "application/json"
+	AppName     = "xyz"
+)
+```
+- Compile **calls/circli.go**
+```
+[misale]$ go build circli.go 
+```
 ## Usage :
 
 ```

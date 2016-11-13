@@ -2,13 +2,9 @@
 // Use of this source code is governed by a MIT license that can be found in the LICENSE file.
 package circonusapi
 
-type HTTPHeader struct {
-	Token       string
-	Accept      string
-	ContentType string
-	AppName     string
-}
 
+
+// Account API Object
 type Account struct {
 	Cid           string        `json:"_cid"`
 	ContactGroups []string      `json:"_contact_groups"`
@@ -27,6 +23,7 @@ type Account struct {
 	Users         []interface{} `json:"users"`
 }
 
+// Alert API Object
 type Alert struct {
 	Acknowledgement string   `json:"_acknowledgement"`
 	AlertUrl        string   `json:"_alert_url"`
@@ -47,6 +44,7 @@ type Alert struct {
 	Value           float64  `json:"_value"`
 }
 
+//Annotation API Object
 type Annotation struct {
 	Cid            string  `json:"_cid"`
 	Created        float64 `json:"_created"`
@@ -59,6 +57,7 @@ type Annotation struct {
 	Title          string  `json:"title"`
 }
 
+// Broker API Object
 type Broker struct {
 	Cid       string        `json:"_cid"`
 	Details   []interface{} `json:"_details"`
@@ -69,6 +68,7 @@ type Broker struct {
 	Type      string        `json:"_type"`
 }
 
+//Broker Detail API Object
 type BrokerDetail struct {
 	Cn                     string   `json:"cn"`
 	ExternalHost           string   `json:"external_host"`
@@ -82,6 +82,7 @@ type BrokerDetail struct {
 	Version                float64  `json:"version"`
 }
 
+//Data API Object
 type Data struct {
 	Timestamp         float64 `json:"timestamp"`
 	Value             float64 `json:"value"`
@@ -97,6 +98,7 @@ type Data struct {
 	Stddev            float64 `json:"stddev"`
 }
 
+//Check API Object
 type Check struct {
 	Active      bool        `json:"_active"`
 	Broker      string      `json:"_broker"`
@@ -106,6 +108,7 @@ type Check struct {
 	Details     interface{} `json:"_details"` // the map needs to be verified
 }
 
+//Check Bundle API Object
 type CheckBundle struct {
 	CheckUuids            []interface{}     `json:"_check_uuids"`
 	Checks                []interface{}     `json:"_checks"`
@@ -127,6 +130,7 @@ type CheckBundle struct {
 	Type                  string            `json:"type"`
 }
 
+//CheckMove API Object
 type CheckMove struct {
 	Broker    string  `json:"_broker"`
 	Cid       string  `json:"_cid"`
@@ -136,16 +140,20 @@ type CheckMove struct {
 	NewBroker string  `json:"new_broker"`
 }
 
+//Circonus Usage struct
 type CnsUsage struct {
 	Limit float64 `json:"_limit"`
 	Unit  string  `json:"_type"`
 	Used  int64   `json:"_used"`
 }
+
+// Circonus Invite struct
 type CnsInvite struct {
 	Email string `json:"email"`
 	Role  string `json:"role"`
 }
 
+// Metric API Object
 type Metric struct {
 	Active      bool          `json:"_active"`
 	Check       string        `json:"_check"`
@@ -161,16 +169,19 @@ type Metric struct {
 	Units       interface{}   `json:"units"`
 }
 
+// User Role struct
 type Role struct {
 	Role string `json:"role"`
 	User string `json:"user"`
 }
 
+// Contact Info struct
 type ContactInfo struct {
 	SMS  string `json:"sms"`
 	XMPP string `json:"xmpp"`
 }
 
+//User API Object
 type User struct {
 	Cid         string      `json:"_cid"`
 	ContactInfo ContactInfo `json:"contact_info"`
@@ -203,6 +214,7 @@ type Graph struct {
 	Title             string        `json:"title"`
 }
 
+// DataPoint struct (graph)
 type DataPoint struct {
 	Alpha         string      `json:"alpha"`
 	Axis          string      `json:"axis"`
@@ -219,18 +231,7 @@ type DataPoint struct {
 	Stack         interface{} `json:"stack"`
 }
 
-// Needs to be checked - part of graph object
-//type MetricCluster struct {
-//	AggregateFunction string      `json:"aggregate_function"`
-//	Axis              string      `json:"axis"`
-//	DataFormula       string      `json:"data_formula"`
-//	Hidden            bool        `json:"hidden"`
-//	LegendFormula     string      `json:"legend_formula"`
-//	MetricCluster     string      `json:"metric_cluster"`
-//	Name              string      `json:"name"`
-//	Stack             interface{} `json:"stack"`
-//}
-
+//AccessKey struct (graph)
 type AccessKey struct {
 	Width          int    `json:"width"`
 	LockShowTimes  bool   `json:"lock_show_times"`
@@ -297,6 +298,7 @@ type RuleSet struct {
 	Rules      []interface{} `json:"rules"`
 }
 
+// Rule struct (RuleSet)
 type Rule struct {
 	Criteria           string      `json:"criteria"`
 	Severity           int         `json:"severity"`
@@ -441,6 +443,7 @@ type Widget struct {
 	WidgetID string `json:"widget_id"`
 }
 
+//Worksheet API Object
 type Worksheet struct {
 	Cid          string        `json:"_cid"`
 	Description  string        `json:"description"`
@@ -456,6 +459,7 @@ type Worksheet struct {
 	Title string   `json:"title"`
 }
 
+//CAQL data struct
 type CaqlData struct {
 	Data []struct {
 		TimeStamp float64   `json:"time_stamp"`
@@ -467,6 +471,7 @@ type CaqlData struct {
 	Start  float64 `json:"_start"`
 }
 
+//Check Bundle Metrics API Object
 type CheckBundleMetrics struct {
 	Cid     string `json:"_cid"`
 	Metrics []struct {
@@ -479,6 +484,7 @@ type CheckBundleMetrics struct {
 	} `json:"metrics"`
 }
 
+// Contact Group API Object
 type ContactGroup struct {
 	Cid               string  `json:"_cid"`
 	LastModified      float64 `json:"_last_modified"`
