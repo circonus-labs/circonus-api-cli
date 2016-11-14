@@ -16,7 +16,7 @@ const (
 ```
 - Compile **calls/circli.go**
 ```
-[misale]$ go build circli.go 
+$ go build circli.go 
 ```
 ## Usage :
 
@@ -98,7 +98,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **name** : string value of name in account API object
  - **Example**
 ```json
-        [misale]$ circli -object account -call get -where '{"account_id":2317}'
+        $ circli -object account -call get -where '{"account_id":2317}'
         {
                 "_cid": "/account/2317",
                 "_contact_groups": [
@@ -140,7 +140,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                         }
                 ]
         }
-        [misale]$ 
+        $ 
 ```
 #
  **alert** : Representation of an Alert that occurred (Readonly) 
@@ -160,7 +160,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **tags_has** : tag string
  - **Example**
 ```json
- [misale]$ circli -object alert -call get -where '{"occurred_on_gt":1460000000,"occurred_on_lt":1470048105}'
+ $ circli -object alert -call get -where '{"occurred_on_gt":1460000000,"occurred_on_lt":1470048105}'
  [
          {
                  "_acknowledgement": "",
@@ -184,7 +184,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                  "_value": 0
          }
  ]
- [misale]$ 
+ $ 
 ```
 #
 **annotation** : Mark important events used for correlation
@@ -205,7 +205,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **stop_ge** : Lower bound (ge = greater than or equal to) for epoch stop timestamp of annotation API object
  - **Example**
 ```json
-  [misale]$ circli -object annotation -call get -where '{"start_gt":1467000000,"stop_lt":1470048105}'
+  $ circli -object annotation -call get -where '{"start_gt":1467000000,"stop_lt":1470048105}'
   [
           {
                   "_cid": "/annotation/124216",
@@ -230,7 +230,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   "title": "Test Annotation updated 3"
           }
   ]
-  [misale]$ 
+  $ 
 ```
 #
 **broker** : Remote software agent that collects the data from monitored hosts
@@ -244,7 +244,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **type** : The string value of _type in broker API object
  - **Example**
 ```json
-  [misale]$ circli -object broker -call get -where '{"type":"enterprise"}'
+  $ circli -object broker -call get -where '{"type":"enterprise"}'
    [
            {
                    "_cid": "/broker/1289",
@@ -319,7 +319,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                    "_type": "enterprise"
            }
    ]
-   [misale]$ 
+   $ 
 ```
 #
 **caql** : The CAQL API endpoint provides a way to extact data from Circonus using a CAQL query
@@ -334,10 +334,10 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **period** : time period in seconds for data extraction
  - **Example**
 ```
-[misale]$ circli -call get -object caql -where '{"query":"metric:average(\"05ef308d-e19c-6515-9e43-c4fffff51823\",\"sessions\")","start":1478558000,"end":1478559000,"period":60}'
+$ circli -call get -object caql -where '{"query":"metric:average(\"05ef308d-e19c-6515-9e43-c4fffff51823\",\"sessions\")","start":1478558000,"end":1478559000,"period":60}'
 {"_data":[[1478557980,[1]],[1478558040,[4]],[1478558100,[2]],[1478558160,[3]],[1478558220,[6]],[1478558280,[2]],[1478558340,[5]],[1478558400,[2]],[1478558460,[2]],[1478558520,[3]],[1478558580,[6]],[1478558640,[4]],[1478558700,[4]],[1478558760,
 [6]],[1478558820,[2]],[1478558880,[10]],[1478558940,[3]]],"_start":1478558000,"_end":1478559000,"_query":"metric:average(\"05ef308d-e19c-6515-9e43-c4fffff51823\",\"sessions\")","_period":60}
-[misale]$ 
+$ 
 ```
 #
 **check** : Individual elements of a check bundle (Readonly)
@@ -351,7 +351,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **check_uuid** : The string value of _check_uuid in a check API object
  - **Example**
 ```json
-  [misale]$ circli -object check -call get -where '{"check_uuid":"ff8f62f8-ff87-4ffd-f27b-ff4ff34fff54"}'
+  $ circli -object check -call get -where '{"check_uuid":"ff8f62f8-ff87-4ffd-f27b-ff4ff34fff54"}'
   [
           {
                   "_active": true,
@@ -364,7 +364,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   }
           }
   ]
-  [misale]$ 
+  $ 
 ```
 #
 **check_bundle** : Collection of checks that have the same configuration and target, but collected from different brokers
@@ -385,7 +385,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **brokers_has** : Integer part of element of the list value of brokers in check_bundle API object (to list all check bundles using a particular broker)
  - **Example**
 ```json
-  [misale]$ circli -object checkbundle -call get -where '{"target":"xyz-web-01.wash.dc.xyz.net"}'
+  $ circli -object checkbundle -call get -where '{"target":"xyz-web-01.wash.dc.xyz.net"}'
   [
           {
                   "_check_uuids": [
@@ -454,7 +454,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   "type": "json"
           }
   ]
-  [misale]$ 
+  $ 
 ```
 #
 **check_bundle_metrics** : Provides interface to update/list metrics under a check_bundle.
@@ -466,7 +466,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **check_bundle_id** : The integer part of _cid value in check_bundle API object (known check_bundle cid)
  - **Example**
 ```json
-[misale]$ circli -call get -object check_bundle_metrics -where '{"check_bundle_id":158234}' 
+$ circli -call get -object check_bundle_metrics -where '{"check_bundle_id":158234}' 
 {
         "_cid": "/check_bundle_metrics/158234",
         "metrics": [
@@ -496,7 +496,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                 }
         ]
 }
-[misale]$ 
+$ 
 ```
 #
 **check_move** : Request that a Check be moved from one Broker to another
@@ -508,7 +508,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **check_move_id** : The integer part of the _cid value in a check_move API object
  - **Example**
 ```json
- [misale]$ circli -object checkmove -call get -where '{"check_move_id":167194}'
+ $ circli -object checkmove -call get -where '{"check_move_id":167194}'
  {
          "_broker": "/broker/1289",
          "_cid": "/check_move/167194",
@@ -517,7 +517,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
          "check_id": 167194,
          "new_broker": "/broker/1"
  }
- [misale]$ 
+ $ 
 ```
 #
 **contact_group** : Provides means of being notified about alerts. Each contact_group can have one to many users and means of contact
@@ -532,7 +532,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **tags_has** : Tag string to find contact_groups whose tags list includes this.
  - **Example**
 ```json
- [misale]$ circli -call get -object contact_group -where '{"contact_group_id":1234}'
+ $ circli -call get -object contact_group -where '{"contact_group_id":1234}'
  {
          "_cid": "/contact_group/1234",
          "_last_modified": 1.465402911e+09,
@@ -573,7 +573,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                  "service:test"
          ]
  }
- [misale]$ 
+ $ 
 ```
 #
 **dashboard** : Provides API access for creating, reading, updating and deleting Dashboards
@@ -587,7 +587,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **title_like** : String pattern to search all dashboards that have titles matching the string pattern
   - **Example**
 ```json
-  [misale]$ circli -object dashboard -call get -where '{"title_like":"Fancy*"}'
+  $ circli -object dashboard -call get -where '{"title_like":"Fancy*"}'
   [
           { 
                   "_created": 1472738070,
@@ -687,7 +687,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   ]
           }
   ]
-  [misale]$ 
+  $ 
 ```
 #
 **data** : Readonly endpoint to pull the values of a single data point for a given time range
@@ -704,7 +704,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **type** : The type of data you wish to extract. This must be text, numeric, or histogram
  - **Example**
 ```json
-  [misale]$ circli -object data -call get -where '{"check_id":167720,"metric_name":"analytics`BACKEND`bout","period":300,"start":1471862000,"stop":1471863124,"type":"numeric"}'
+  $ circli -object data -call get -where '{"check_id":167720,"metric_name":"analytics`BACKEND`bout","period":300,"start":1471862000,"stop":1471863124,"type":"numeric"}'
   [
           {
                   "timestamp": 1.4718618e+09,
@@ -763,7 +763,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   "stddev": 0
           }
   ]
-  [misale]$  
+  $  
 ```
 #
 **graph** : Allows mass creation, editing and removal of graphs
@@ -778,7 +778,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **tags_has** : Tag string to search graphs that have matching tag
  - **Example**
 ```json
-  [misale]$ circli -object graph -call get -where '{"graph_id":"98ff11f9-ff16-f74f-f446-f8f0f7533ff4"}'
+  $ circli -object graph -call get -where '{"graph_id":"98ff11f9-ff16-f74f-f446-f8f0f7533ff4"}'
   {
           "_cid": "/graph/98ff11f9-ff16-f74f-f446-f8f0f7533ff4",
           "access_keys": [],
@@ -835,7 +835,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
           ],
           "title": "xyz-app-07 eth4 Errors"
   }
-  [misale]$ 
+  $ 
 ```
 #
 **maintenance** : Schedule a maintenance window for your account, check bundle, rule set or host
@@ -855,7 +855,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **type** : String value of type in maintenance API object
  - **Example**
 ```json
-  [misale]$ circli -object maintenance -call get -where '{"maintenance_id":66799}'
+  $ circli -object maintenance -call get -where '{"maintenance_id":66799}'
   {
           "_cid": "/maintenance/66799",
           "item": "1.1.1.1",
@@ -874,7 +874,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
           ],
           "type": "host"
   }
-  [misale]$ 
+  $ 
 ```
 #
 **metric_cluster** : A metric cluster is a cluster of metrics defined by a set of queries
@@ -889,7 +889,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **tags_has** : Tag string to search metric_clusters that have a matching tag
  - **Example**
 ```json
-  [misale]$ circli -object metriccluster -call get -where '{"name_like":"202"}'
+  $ circli -object metriccluster -call get -where '{"name_like":"202"}'
   [
           {
                   "_cid": "/metric_cluster/30517",
@@ -931,7 +931,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   "_matching_metrics": null
           }
   ]
-  [misale]$ 
+  $ 
 ```
 #
 **rule_set** : define a collection of rules to apply to a given metric
@@ -944,7 +944,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **check** : Integer part of the value of _cid in a check API object, to list rule set that are monitoring a particular check 
  - **Example**  
 ```json
-  [misale]$ go run circli.go -object rule_set -call get -where '{"check":163862}'
+  $ go run circli.go -object rule_set -call get -where '{"check":163862}'
   [
           {
                   "_cid": "/rule_set/163862_if`bond0`in_bytes",
@@ -1015,7 +1015,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   ]
           }
   ]
-  [misale]$ 
+  $ 
 ```
 #
 **rule_set_group** : Allows togroup together rule sets and trigger alerts based on combinations of those rule sets faulting
@@ -1030,7 +1030,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **tags_has** : Tag string to search rule_set_groups that have a matching tag
  - **Example**
 ```json
-  [misale]$ circli -object rule_set_group -call get -where '{"name":"test"}'
+  $ circli -object rule_set_group -call get -where '{"name":"test"}'
   [
           {
                   "_cid": "/rule_set_group/175410",
@@ -1071,7 +1071,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   ]
           }
   ]
-  [misale]$ 
+  $ 
 ```
 #
 **tags** : List all tags in use in your account (don't have any fields, Readonly)
@@ -1083,11 +1083,11 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **tag_id**: Tag name string from the value of _cid in a Tag API object
  - **Example**
 ```json
- [misale]$ circli -object tag -call get -where '{"tag_id" : "haproxy"}'
+ $ circli -object tag -call get -where '{"tag_id" : "haproxy"}'
  {
          "_cid": "/tag/haproxy"
  }
- [misale]$ 
+ $ 
 ```
 #
 **template** : A means to setup a mass number of checks quickly through both the API and UI
@@ -1103,7 +1103,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
  
  - **Example**
 ```json
-  [misale]$ circli -object template -call get -where '{"tags_has":"cluster:web"}'
+  $ circli -object template -call get -where '{"tags_has":"cluster:web"}'
   [
           {
                   "_cid": "/template/970",
@@ -1129,7 +1129,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   ]
           }
   ]
-  [misale]$
+  $
 ```
 #
 **user** : Get basic information about the users on your account or a single user
@@ -1144,7 +1144,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **email** : String value of email in user API object
  - **Example**
 ```json
-  [misale]$ circli -object user -call get -where '{"last_name":"Smith"}'
+  $ circli -object user -call get -where '{"last_name":"Smith"}'
   [
           {
                   "_cid": "/user/5483",
@@ -1157,7 +1157,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   "lastname": "Smith"
           }
   ]
-  [misale]$ 
+  $ 
 ```
 #
 **worksheet** : Collection of graphs and allow quick correlation across them
@@ -1172,7 +1172,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
     - **tags_has** : Tag string to search worksheets that have a matching tag
  - **Example**
 ```json
-  [misale]$ circli -object worksheet -call get -where '{"title_like":"xyz-app-07"}'
+  $ circli -object worksheet -call get -where '{"title_like":"xyz-app-07"}'
   [
           {
                   "_cid": "/worksheet/f87f7957-7f3f-4f03-fff1-f0f8f5f126ff",
@@ -1196,7 +1196,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   "title": "COSI xyz-app-07 1.2.3.4"
           }
   ]
-  [misale]$ 
+  $ 
 ```
 #
 ### List Calls
@@ -1208,7 +1208,7 @@ circli -object <object_type> -call list
 Possible Object Types : account, alert, annotation, broker, check, check_bundle, check_move, data, dashboard, graph, maintenance, metric_cluster, rule_set, rule_set_group, tag, template, user, worksheet 
 ####Example : List all annotations
 ```json
-[misale]$ circli -object annotation -call list
+$ circli -object annotation -call list
 [
         {
                 "_cid": "/annotation/112378",
@@ -1244,7 +1244,7 @@ Possible Object Types : account, alert, annotation, broker, check, check_bundle,
                 "title": "Moratorium is extended"
         }
 ]
-[misale]$ 
+$ 
 
 ```
 #
@@ -1255,7 +1255,7 @@ circli -object <object_type> -call create [-where <json_string> | -file <json_fi
 ```
 #### Example : Create a graph
 ```json
-[misale]$ cat new_graph.json 
+$ cat new_graph.json 
 {
     "access_keys": [],
     "composites": [],
@@ -1311,8 +1311,8 @@ circli -object <object_type> -call create [-where <json_string> | -file <json_fi
     ],
     "title": "Testing graph create through circli"
 }
-[misale]$ 
-[misale]$ circli -object graph -call create -file new_graph.json 
+$ 
+$ circli -object graph -call create -file new_graph.json 
 {
         "access_keys": [],
         "composites": [],
@@ -1364,7 +1364,7 @@ circli -object <object_type> -call create [-where <json_string> | -file <json_fi
         "metric_clusters": [],
         "min_right_y": null
 }
-[misale]$ 
+$ 
 ```
 #
 ### Update Calls
@@ -1374,15 +1374,15 @@ circli -object <object_type> -call update -oid <object_id> [-where <json_string>
 ```
 #### Example 1: Update a check bundle with a new set of tags
 ```json
-[misale]$ cat bundle_update.json 
+$ cat bundle_update.json 
 {"tags": [
         "web-layer:server",
         "web-region:dc",
         "cluster:202",
         "api_create"
     ]}
-[misale]$ 
-[misale]$ circli -object check_bundle -call update -oid "137665"  -file bundle_update.json 
+$ 
+$ circli -object check_bundle -call update -oid "137665"  -file bundle_update.json 
 {
         "_created": 1471979522,
         "status": "active",
@@ -1434,7 +1434,7 @@ circli -object <object_type> -call update -oid <object_id> [-where <json_string>
                 "privacy_protocol": "DES"
         }
 }
-[misale]$ 
+$ 
 ```
 #### Example 2: Update template and unbind a host
 - before update
@@ -1465,7 +1465,7 @@ circli -object <object_type> -call update -oid <object_id> [-where <json_string>
 ```
 - updating template with host unbinding (removing host *xyz-web-03.wash.dc.xyz.net*)
 ```json
-[misale]$ cat template_update.json 
+$ cat template_update.json 
 {
 "hosts":[
                 "xyz-web-01.wash.dc.xyz.net",
@@ -1479,11 +1479,11 @@ circli -object <object_type> -call update -oid <object_id> [-where <json_string>
                         }
                 ]
 }
-[misale]$
+$
 ```
 - after updating
 ```json
-[misale]$ circli -object template -call update -oid "970" -file template_update.json -host_removal_action "unbind"
+$ circli -object template -call update -oid "970" -file template_update.json -host_removal_action "unbind"
 {
         "hosts": [
                 "xyz-web-01.wash.dc.xyz.net",
@@ -1507,7 +1507,7 @@ circli -object <object_type> -call update -oid <object_id> [-where <json_string>
         ],
         "_last_modified": 1475166917
 }
-[misale]$
+$
 ```
 #
 ### Delete Calls
@@ -1517,9 +1517,9 @@ circli -object <object_type> -call delete -oid <object_id>
 ```
 #### Example : Delete a graph
 ```json
-[misale]$ circli -object graph -call delete -oid fff3219f-7fd5-f2f5-f0f1-f2ff4f291670
+$ circli -object graph -call delete -oid fff3219f-7fd5-f2f5-f0f1-f2ff4f291670
 2016/08/25 20:50:47 graph delete :  fff3219f-7fd5-f2f5-f0f1-f2ff4f291670 
-[misale]$ circli -object graph -call get -where '{"graph_id":"fff3219f-7fd5-f2f5-f0f1-f2ff4f291670"}'
+$ circli -object graph -call get -where '{"graph_id":"fff3219f-7fd5-f2f5-f0f1-f2ff4f291670"}'
 {
         "_cid": "",
         "access_keys": null,
@@ -1540,5 +1540,5 @@ circli -object <object_type> -call delete -oid <object_id>
         "tags": null,
         "title": ""
 }
-[misale]$ 
+$ 
 ```
