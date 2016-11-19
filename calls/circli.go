@@ -47,7 +47,7 @@ var object = flag.String("object", "", "Circonus Object Type. Possible object ty
 var call = flag.String("call", "", "Circonus Call Type. Example : get, list, create, update, delete\n")
 var file = flag.String("file", "", "JSON formatted data input file\n")
 var oid = flag.String("oid", "", "Circonus object ID. Value of _cid in the API object without the \"/<object_type>/\" prefix. This flag is used with \"update\" and \"delete\" calls\n")
-var where = flag.String("where", "", "JSON string used for querying where clause\n")
+var where = flag.String("where", "", "JSON string used for querying (where clause)\n")
 var host_removal_action = flag.String("host_removal_action", "", "Host removal action used with template update actions: possible values are \"unbind\", \"deactivate\", \"remove\"\n"+
 	"\tunbind :\tMarks the check(s) as unbound from the template, you can then modify them as if they were a \"normal\" check\n"+
 	"\tdeactivate :\tSets the check(s) as inactive, they will still show up on the interface and you can view historic data for them \n"+
@@ -56,7 +56,7 @@ var bundle_removal_action = flag.String("bundle_removal_action", "", "Bundle rem
 	"\tunbind :\tMarks the check(s) as unbound from the template, you can then modify them as if they were a \"normal\" check\n"+
 	"\tdeactivate :\tSets the check(s) as inactive, they will still show up on the interface and you can view historic data for them \n"+
 	"\tremove :\tDeletes the check(s) from the system, they will no longer show in the UI and historic data will be gone \n")
-
+var version = flag.Bool("version", false, "Prints current version of circli\n")
 //
 // TBD - add optional flags to pass app_name, api_token and api_url from CLI
 //
@@ -65,6 +65,10 @@ var bundle_removal_action = flag.String("bundle_removal_action", "", "Bundle rem
 //var api_url = flag.String("API_URL",circonusapi.CirconusURL,"Circonus API URL (optional to override default api_url)")
 func main() {
 	flag.Parse()
+	//circli version
+	if *version {
+		fmt.Println("cirli version 1.0.0")
+	}
 	//user commandline input sanity check
 	if *where == "" && *file == "" && *call != "list" && *call != "delete" {
 		log.Fatal("circli needs either where JSON string with -where flag or JSON file " +

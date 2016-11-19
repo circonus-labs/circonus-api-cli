@@ -1,5 +1,5 @@
 # Circonus CLI (circli) 
-Go implementation of CLI wrapper for Circonus API (based on the documentation at https://login.circonus.com/resources/api)
+Go implementation of CLI wrapper for Circonus [API](https://login.circonus.com/resources/api)
 
 ## Building CLI Binary
 - Update Circonus API endpoint settings(Token,CirconusURL and AppName) in **circonusapi/endpoint.go** 
@@ -68,8 +68,11 @@ Usage of circli:
   -oid string
         Circonus object ID. Value of _cid in the API object without the "/<object_type>/" prefix. This flag is used with "update" and "delete" calls
 
+  -version
+        Prints current version of circli
+
   -where string
-        JSON string used for querying where clause
+        JSON string used for querying (where clause)
 ```
 
 ## Circonus CLI (circli) user manual
