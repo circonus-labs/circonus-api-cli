@@ -75,7 +75,7 @@ $
 ## Environmental variable settings for circli
 It will not be fun to use the **-api_token** , **-app_name** and **-api_url** flags with every run of circli, hence you can avoid using these flags by setting them up as environmental variables before running circli. 
 
-1. In a text editor create a file named ACCOUNT_circli_rc.sh and add the ACCOUNT information. In this example ACCOUNT=xyz.
+**1.** In a text editor create a file named ACCOUNT_circli_rc.sh and add the ACCOUNT information. In this example ACCOUNT=xyz.
 ```
 $ cat xyz_circli_rc.sh
 export CIRCONUS_APP_NAME="xyz"
@@ -84,7 +84,7 @@ export CIRCONUS_API_URL="https://api.circonus.com/v2/"
 $
 ```
 
-2. On any shell from which you want to run circli, source the ACCOUNT_circli_rc.sh file for the respective account. In this example, we are sourcing the xyz_circli_rc.sh file for the xyz account:
+**2.** On any shell from which you want to run circli, source the ACCOUNT_circli_rc.sh file for the respective account. In this example, we are sourcing the xyz_circli_rc.sh file for the xyz account:
 ```
 $ source xyz_circli_rc.sh
 $ env | grep CIRC
@@ -94,7 +94,7 @@ CIRCONUS_API_TOKEN=9f99ff99-9f99-999f-f99f-9f9999f9ff9f
 $
 ```
 
-3. Now the shell environment is ready for running circli commands without using **-api_token** , **-app_name** and **-api_url** flags.
+**3.** Now the shell environment is ready for running circli commands without using **-api_token** , **-app_name** and **-api_url** flags.
 
 Example:
 ```json
