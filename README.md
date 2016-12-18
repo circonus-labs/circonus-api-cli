@@ -2,78 +2,147 @@
 Go implementation of CLI wrapper for Circonus [API](https://login.circonus.com/resources/api)
 
 ## Building CLI Binary
-- Update Circonus API endpoint settings(Token,CirconusURL and AppName) in **circonusapi/endpoint.go** 
-```go
-package circonusapi
-
-const (
-	Token       = "ffffffff-ffff-ffff-ffff-ffffffffffff"
-	CirconusURL = "https://api.circonus.com/v2/"
-	Accept      = "application/json"
-	ContentType = "application/json"
-	AppName     = "xyz"
-)
-```
 - Compile **calls/circli.go**
 ```
-$ go build circli.go 
-```
+$ go build circli.go
+``` 
+#
 ## Usage :
 
 ```
-Usage of circli:
+$ ./circli --help
+Usage of ./circli:
+  -api_token string
+    	Circonus API Token (optional to override default CIRCONUS_API_TOKEN environmental variable)
+  -api_url string
+    	Circonus API URL (optional to override default CIRCONUS_API_URL environmental variable)
+  -app_name string
+    	Circonus account name (optional to override the default CIRCONUS_APP_NAME environmental variable)
   -bundle_removal_action string
-        Bundle removal action used with template update actions: possible values are "unbind", "deactivate", "remove"
-        unbind :        Marks the check(s) as unbound from the template, you can then modify them as if they were a "normal" check
-        deactivate :    Sets the check(s) as inactive, they will still show up on the interface and you can view historic data for them 
-        remove :        Deletes the check(s) from the system, they will no longer show in the UI and historic data will be gone 
+    	Bundle removal action used with template update actions: possible values are "unbind", "deactivate", "remove"
+	unbind :	Marks the check(s) as unbound from the template, you can then modify them as if they were a "normal" check
+	deactivate :	Sets the check(s) as inactive, they will still show up on the interface and you can view historic data for them
+	remove :	Deletes the check(s) from the system, they will no longer show in the UI and historic data will be gone
 
   -call string
-        Circonus Call Type. Example : get, list, create, update, delete
+    	Circonus Call Type. Example : get, list, create, update, delete
 
   -file string
-        JSON formatted data input file
+    	JSON formatted data input file
 
   -host_removal_action string
-        Host removal action used with template update actions: possible values are "unbind", "deactivate", "remove"
-        unbind :        Marks the check(s) as unbound from the template, you can then modify them as if they were a "normal" check
-        deactivate :    Sets the check(s) as inactive, they will still show up on the interface and you can view historic data for them 
-        remove :        Deletes the check(s) from the system, they will no longer show in the UI and historic data will be gone 
+    	Host removal action used with template update actions: possible values are "unbind", "deactivate", "remove"
+	unbind :	Marks the check(s) as unbound from the template, you can then modify them as if they were a "normal" check
+	deactivate :	Sets the check(s) as inactive, they will still show up on the interface and you can view historic data for them
+	remove :	Deletes the check(s) from the system, they will no longer show in the UI and historic data will be gone
 
   -object string
-        Circonus Object Type. Possible object types : 
-        account :       basic contact details associated with the account and description 
-        alert :         Representation of an Alert that occurred (Readonly) 
-        annotation :    Mark important events used for correlation 
-        broker :        Remote software agent that collects the data from monitored hosts
-        caql :          Provides a way to extact data from Circonus using a CAQL query
-        check :         Individual elements of a check bundle (Readonly)
-        check_bundle :  Collection of checks that have the same configuration and target, but collected from different brokers
-        check_bundle_metrics :  Provides a way to add or remove individual metrics under a Check Bundle rather than replacing the entire Check Bundle object
-        check_move :    Request that a Check be moved from one Broker to another
-        contact_group : Provides means of being notified about alerts. Each contact_group can have one to many users and means of contact
-        data :          Readonly endpoint to pull the values of a single data point for a given time range
-        dashboard :     Provides access for creating, reading, updating and deleting Dashboards.
-        graph :         Allows mass creation, editing and removal of graphs
-        maintenance :   Schedule a maintenance window for your account, check bundle, rule set or host
-        metric :        Provides API access to individual Metrics. Generally readonly but units and tags fields can be updated
-        metric_cluster :        A metric cluster is a cluster of metrics defined by a set of queries
-        rule_set :      define a collection of rules to apply to a given metric
-        rule_set_group :        Allows togroup together rule sets and trigger alerts based on combinations of those rule sets faulting
-        tag :           List all tags in use in your account (don't have any fields, Readonly)
-        template :      A means to setup a mass number of checks quickly through both the API and UI
-        user :          Get basic information about the users on your account or a single user
-        worksheet :     Collection of graphs and allow quick correlation across them
+    	Circonus Object Type. Possible object types :
+	account :	basic contact details associated with the account and description
+	alert :		Representation of an Alert that occurred (Readonly)
+	annotation :	Mark important events used for correlation
+	broker :	Remote software agent that collects the data from monitored hosts
+	caql :		Provides a way to extact data from Circonus using a CAQL query
+	check :		Individual elements of a check bundle (Readonly)
+	check_bundle :	Collection of checks that have the same configuration and target, but collected from different brokers
+	check_bundle_metrics :	Provides a way to add or remove individual metrics under a Check Bundle rather than replacing the entire Check Bundle object
+	check_move :	Request that a Check be moved from one Broker to another
+	contact_group :	Provides means of being notified about alerts. Each contact_group can have one to many users and means of contact
+	data :		Readonly endpoint to pull the values of a single data point for a given time range
+	dashboard :	Provides access for creating, reading, updating and deleting Dashboards.
+	graph :		Allows mass creation, editing and removal of graphs
+	maintenance :	Schedule a maintenance window for your account, check bundle, rule set or host
+	metric :	Provides API access to individual Metrics. Generally readonly but units and tags fields can be updated
+	metric_cluster :	A metric cluster is a cluster of metrics defined by a set of queries
+	rule_set :	define a collection of rules to apply to a given metric
+	rule_set_group :	Allows togroup together rule sets and trigger alerts based on combinations of those rule sets faulting
+	tag :		List all tags in use in your account (don't have any fields, Readonly)
+	template :	A means to setup a mass number of checks quickly through both the API and UI
+	user :		Get basic information about the users on your account or a single user
+	worksheet :	Collection of graphs and allow quick correlation across them
 
   -oid string
-        Circonus object ID. Value of _cid in the API object without the "/<object_type>/" prefix. This flag is used with "update" and "delete" calls
+    	Circonus object ID. Value of _cid in the API object without the "/<object_type>/" prefix. This flag is used with "update" and "delete" calls
 
   -version
-        Prints current version of circli
+    	Prints current version of circli
 
   -where string
-        JSON string used for querying (where clause)
+    	JSON string used for querying (where clause)
+$
 ```
+#
+## Environmental variable settings for circli
+It will not be fun to use the **-api_token** , **-app_name** and **-api_url** flags with every run of circli, hence you can avoid using these flags by setting them up as environmental variables before running circli. 
+
+1. In a text editor create a file named ACCOUNT_circli_rc.sh and add the ACCOUNT information. In this example ACCOUNT=xyz.
+```
+$ cat xyz_circli_rc.sh
+export CIRCONUS_APP_NAME="xyz"
+export CIRCONUS_API_TOKEN="9f99ff99-9f99-999f-f99f-9f9999f9ff9f"
+export CIRCONUS_API_URL="https://api.circonus.com/v2/"
+$
+```
+2. On any shell from which you want to run circli, source the ACCOUNT_circli_rc.sh file for the respective account. In this example, we are sourcing the xyz_circli_rc.sh file for the xyz account:
+```
+$ source xyz_circli_rc.sh
+$ env | grep CIRC
+CIRCONUS_API_URL=https://api.circonus.com/v2/
+CIRCONUS_APP_NAME=xyz
+CIRCONUS_API_TOKEN=9f99ff99-9f99-999f-f99f-9f9999f9ff9f
+$
+```
+3. Now the shell environment is ready for running circli commands without using **-api_token** , **-app_name** and **-api_url** flags.
+
+Example:
+```json
+$ ./circli -call get -object check_bundle -where '{"display_name_like":"web-bos-a","type":"caql"}'
+[
+	{
+		"_check_uuids": [
+			"778ff1ff-8783-481f-ffff-fff862f6ffff"
+		],
+		"_checks": [
+			"/check/201616"
+		],
+		"_cid": "/check_bundle/271609",
+		"_created": 1.48174528e+09,
+		"_last_modified": 1.48174528e+09,
+		"_last_modified_by": "/user/6484",
+		"_reverse_connection_urls": [
+			"mtev_reverse://1.2.3.4:43191/check/778ff1ff-8783-481f-ffff-fff862f6ffff"
+		],
+		"brokers": [
+			"/broker/2016"
+		],
+		"config": {
+			"query": "search:metric(\"(tags:host:web-bos-a*,data:app-stat)*foo*metric\") | stats:sum()",
+			"reverse:secret_key": "1fff69ff-f0f7-46ff-f646-97ff5f52ff58"
+		},
+		"display_name": "web-bos-a app stats",
+		"metrics": [
+			{
+				"name": "output[1]",
+				"status": "active",
+				"tags": [],
+				"type": "numeric",
+				"units": ""
+			}
+		],
+		"notes": "",
+		"period": 60,
+		"status": "active",
+		"tags": [
+			"team:xyz-web"
+		],
+		"target": "q._caql",
+		"timeout": 10,
+		"type": "caql"
+	}
+]
+$
+```
+#
 
 ## Circonus CLI (circli) user manual
 #####[Get](https://github.com/misale/circonus-api-go#get-calls) 

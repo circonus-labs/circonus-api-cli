@@ -29,10 +29,10 @@ func HTTPCall(payload []byte, method string, url string) (*http.Response, error)
 		fmt.Println(err)
 		return &http.Response{}, err
 	} else {
-		req.Header.Set("X-Circonus-Auth-Token", Token)
-		req.Header.Set("Accept", Accept)
-		req.Header.Set("Content-Type", ContentType)
-		req.Header.Set("X-Circonus-App-Name", AppName)
+		req.Header.Set("X-Circonus-Auth-Token", os.Getenv("CIRONUS_API_TOKEN"))
+		req.Header.Set("Accept", "application/json")
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("X-Circonus-App-Name", os.Getenv("CIRCONUS_APP_NAME"))
 
 		return client.Do(req)
 	}

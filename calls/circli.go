@@ -10,6 +10,7 @@ import (
 	"github.com/misale/circonus-api-go/circonusapi"
 	"io/ioutil"
 	"log"
+	"os"
 )
 
 // circli Usage
@@ -57,17 +58,21 @@ var bundle_removal_action = flag.String("bundle_removal_action", "", "Bundle rem
 	"\tdeactivate :\tSets the check(s) as inactive, they will still show up on the interface and you can view historic data for them \n"+
 	"\tremove :\tDeletes the check(s) from the system, they will no longer show in the UI and historic data will be gone \n")
 var version = flag.Bool("version", false, "Prints current version of circli\n")
-//
-// TBD - add optional flags to pass app_name, api_token and api_url from CLI
-//
-//var app_name = flag.String("APP_NAME",circonusapi.AppName,"Circonus account name (optional to override default app_name)")
-//var api_token = flag.String("API_TOKEN",circonusapi.Token,"Circonus API Token (optional to override default api_token)")
-//var api_url = flag.String("API_URL",circonusapi.CirconusURL,"Circonus API URL (optional to override default api_url)")
+var app_name = flag.String("app_name", os.Getenv("CIRCONUS_APP_NAME"), "Circonus account name (optional to override the default CIRCONUS_APP_NAME environmental variable)")
+var api_token = flag.String("api_token", os.Getenv("CIRCONUS_API_TOKEN"), "Circonus API Token (optional to override default CIRCONUS_API_TOKEN environmental variable)")
+var api_url = flag.String("api_url", os.Getenv("CIRCONUS_API_URL"), "Circonus API URL (optional to override default CIRCONUS_API_URL environmental variable)")
+
 func main() {
 	flag.Parse()
-	//circli version
+	//set env for app name , token and url
+	os.Setenv("CIRCONUS_APP_NAME", *app_name)
+	os.Setenv("CIRONUS_API_TOKEN", *api_token)
+	os.Setenv("CIRCONUS_API_URL", *api_url)
+
+	//circli version : updated to 1.0.1
+	//API settings (api_url,api_token and app_name)decoupled from code into environmental variables
 	if *version {
-		fmt.Println("cirli version 1.0.0")
+		fmt.Println("cirli version 1.0.1")
 	}
 	//user commandline input sanity check
 	if *where == "" && *file == "" && *call != "list" && *call != "delete" {
