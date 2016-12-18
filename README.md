@@ -83,6 +83,7 @@ export CIRCONUS_API_TOKEN="9f99ff99-9f99-999f-f99f-9f9999f9ff9f"
 export CIRCONUS_API_URL="https://api.circonus.com/v2/"
 $
 ```
+
 2. On any shell from which you want to run circli, source the ACCOUNT_circli_rc.sh file for the respective account. In this example, we are sourcing the xyz_circli_rc.sh file for the xyz account:
 ```
 $ source xyz_circli_rc.sh
@@ -92,6 +93,7 @@ CIRCONUS_APP_NAME=xyz
 CIRCONUS_API_TOKEN=9f99ff99-9f99-999f-f99f-9f9999f9ff9f
 $
 ```
+
 3. Now the shell environment is ready for running circli commands without using **-api_token** , **-app_name** and **-api_url** flags.
 
 Example:
