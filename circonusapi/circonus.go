@@ -183,6 +183,7 @@ func CirconusCall(url string, method string, payload []byte) ([]byte, error) {
 func UrlMaker(item string, filter interface{}) (string, error) {
 
 	var url string
+	CirconusURL := os.Getenv("CIRCONUS_API_URL")
 	switch strings.ToLower(item) {
 
 	case "account":
