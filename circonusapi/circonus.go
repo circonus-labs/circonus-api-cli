@@ -85,7 +85,6 @@ func GetData(filter DataFilter) (interface{}, error) {
 func CreateCns(payload []byte, object_url string) ([]byte, error) {
 
 	URL := os.Getenv("CIRCONUS_API_URL") + object_url
-
 	result, err := CirconusCall(URL, "POST", payload)
 
 	if err != nil {
