@@ -83,7 +83,6 @@ func GetData(filter DataFilter) (interface{}, error) {
 
 // CreateCns function takes []byte payload and object_url string, returns []byte
 func CreateCns(payload []byte, object_url string) ([]byte, error) {
-
 	URL := os.Getenv("CIRCONUS_API_URL") + object_url
 	result, err := CirconusCall(URL, "POST", payload)
 
@@ -180,8 +179,8 @@ func CirconusCall(url string, method string, payload []byte) ([]byte, error) {
 // UrlMaker function generates the URL string for CirconusCall depending on the API object type
 // thats is being queried.
 func UrlMaker(item string, filter interface{}) (string, error) {
-
 	var url string
+
 	CirconusURL := os.Getenv("CIRCONUS_API_URL")
 	switch strings.ToLower(item) {
 
