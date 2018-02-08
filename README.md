@@ -1,11 +1,14 @@
-# Circonus CLI (circli) 
+# Circonus CLI (circli)
+
+*Disclaimer* This repository has been contributed by [misale](https://github.com/misale). It is not officially supported by Circonus.
+
 Go implementation of CLI wrapper for Circonus [API](https://login.circonus.com/resources/api)
 
 ## Building CLI Binary
 - Compile **calls/circli.go**
 ```
 $ go build circli.go
-``` 
+```
 #
 ## Usage :
 
@@ -73,7 +76,7 @@ $
 ```
 #
 ## Environmental variable settings for circli
-It will not be fun to use the **-api_token** , **-app_name** and **-api_url** flags with every run of circli, hence you can avoid using these flags by setting them up as environmental variables before running circli. 
+It will not be fun to use the **-api_token** , **-app_name** and **-api_url** flags with every run of circli, hence you can avoid using these flags by setting them up as environmental variables before running circli.
 
 **1.** In a text editor create a file named ACCOUNT_circli_rc.sh and add the ACCOUNT information. In this example ACCOUNT=xyz.
 ```
@@ -147,15 +150,15 @@ $
 #
 
 ## Circonus CLI (circli) user manual
-#####[Get](https://github.com/misale/circonus-api-go#get-calls) 
-#####[List](https://github.com/misale/circonus-api-go#list-calls)  
+#####[Get](https://github.com/misale/circonus-api-go#get-calls)
+#####[List](https://github.com/misale/circonus-api-go#list-calls)
 #####[Create](https://github.com/misale/circonus-api-go#create-calls)
 #####[Update](https://github.com/misale/circonus-api-go#update-calls)
-#####[Delete](https://github.com/misale/circonus-api-go#delete-calls) 
+#####[Delete](https://github.com/misale/circonus-api-go#delete-calls)
 #
 
 ### Get Calls
-Get calls are made to filter/search Circonus API objects using a json formatted where string provided by -where flag or as a file with -file flag. The possible where keys are listed under "Query format" for each type of API object, the 
+Get calls are made to filter/search Circonus API objects using a json formatted where string provided by -where flag or as a file with -file flag. The possible where keys are listed under "Query format" for each type of API object, the
 values of the where keys can be used in combination for filtering/searching.
 #### CLI Syntax
 ```
@@ -163,12 +166,12 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
 ```
 #
 **account** : basic contact details associated with the account and description
- - **Query format** 
+ - **Query format**
 ```json
  {"account_id":"<account_id_number>","name":"<account_name>"}
 ```
   - **Query field (key) description**
-    - **account_id** : the integer part of the value of _cid in the account API object 
+    - **account_id** : the integer part of the value of _cid in the account API object
     - **name** : string value of name in account API object
  - **Example**
 ```json
@@ -214,16 +217,16 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                         }
                 ]
         }
-        $ 
+        $
 ```
 #
- **alert** : Representation of an Alert that occurred (Readonly) 
+ **alert** : Representation of an Alert that occurred (Readonly)
  - **Query format**
 ```json
-    {"alert_id":"<alert_id>" ,"check":"<check_id>","metric_name":"<metric_name>", "severity" : "<alert_severity_num>" , "occurred_on_lt":"<epoch_time_upper_bound>","occurred_on_gt":"<epoch_time_lower_bound>","tags_has":"<tag>" } 
+    {"alert_id":"<alert_id>" ,"check":"<check_id>","metric_name":"<metric_name>", "severity" : "<alert_severity_num>" , "occurred_on_lt":"<epoch_time_upper_bound>","occurred_on_gt":"<epoch_time_lower_bound>","tags_has":"<tag>" }
 ```
  - **Query field (key) description**
-    - **alert_id** : the integer part of the value of _cid in the alert API object 
+    - **alert_id** : the integer part of the value of _cid in the alert API object
     - **severity** : the value of _severity in the alert API object
     - **check** : integer part of check API object _cid (for filtering alerts by check ID)
     - **metric_name** : metric name string for filtering alerts associated with a specific metric ("name"+"_"+"check_id")
@@ -258,7 +261,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                  "_value": 0
          }
  ]
- $ 
+ $
 ```
 #
 **annotation** : Mark important events used for correlation
@@ -269,10 +272,10 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
   - **Query field (key) description**
     - **annotation_id** : The integer part of the _cid value of annotation API object
     - **category** : The category string of annotation API object
-    - **start_gt** : Lower bound (gt = greater than) for epoch start timestamp of annotation API object 
-    - **start_ge** : Lower bound (ge = greater than or equal to) for epoch start timestamp of annotation API object 
-    - **start_lt** : Upper bound (lt = less than) for epoch start timestamp of annotation API object 
-    - **start_le** : Upper bound (le = less than or equal to) for epoch start timestamp of annotation API object 
+    - **start_gt** : Lower bound (gt = greater than) for epoch start timestamp of annotation API object
+    - **start_ge** : Lower bound (ge = greater than or equal to) for epoch start timestamp of annotation API object
+    - **start_lt** : Upper bound (lt = less than) for epoch start timestamp of annotation API object
+    - **start_le** : Upper bound (le = less than or equal to) for epoch start timestamp of annotation API object
     - **stop_lt** : Upper bound (lt = less than) for epoch stop timestamp of annotation API object
     - **stop_le** : Upper bound (lt = less than or equal to) for epoch stop timestamp of annotation API object
     - **stop_gt** : Lower bound (gt = greater than) for epoch stop timestamp of annotation API object
@@ -304,7 +307,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                   "title": "Test Annotation updated 3"
           }
   ]
-  $ 
+  $
 ```
 #
 **broker** : Remote software agent that collects the data from monitored hosts
@@ -393,7 +396,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
                    "_type": "enterprise"
            }
    ]
-   $ 
+   $
 ```
 #
 **caql** : The CAQL API endpoint provides a way to extact data from Circonus using a CAQL query
@@ -411,7 +414,7 @@ circli -object <circonus_object_name> -call get [ -where <json_format_where_stri
 $ circli -call get -object caql -where '{"query":"metric:average(\"05ef308d-e19c-6515-9e43-c4fffff51823\",\"sessions\")","start":1478558000,"end":1478559000,"period":60}'
 {"_data":[[1478557980,[1]],[1478558040,[4]],[1478558100,[2]],[1478558160,[3]],[1478558220,[6]],[1478558280,[2]],[1478558340,[5]],[1478558400,[2]],[1478558460,[2]],[1478558520,[3]],[1478558580,[6]],[1478558640,[4]],[1478558700,[4]],[1478558760,
 [6]],[1478558820,[2]],[1478558880,[10]],[1478558940,[3]]],"_start":1478558000,"_end":1478559000,"_query":"metric:average(\"05ef308d-e19c-6515-9e43-c4fffff51823\",\"sessions\")","_period":60}
-$ 
+$
 ```
 #
 **check** : Individual elements of a check bundle (Readonly)
@@ -438,14 +441,14 @@ $
                   }
           }
   ]
-  $ 
+  $
 ```
 #
 **check_bundle** : Collection of checks that have the same configuration and target, but collected from different brokers
  - **Query format**
 ```json
   {"bundle_id":"<check_bundle_id>","type":"<check_bundle_type>","target":"<target_host>","target_like":"<target_string>","display_name":"<display_name>","display_name_like":"<display_name_string>","tags_has":"<tag>","checks_has":"<check_id>",
-  "brokers_has":"<broker_id>"} 
+  "brokers_has":"<broker_id>"}
 ```
  - **Query field (key) description**
     - **check_bundle_id** : The integer part of _cid value in check_bundle API object (known check_bundle cid)
@@ -528,19 +531,19 @@ $
                   "type": "json"
           }
   ]
-  $ 
+  $
 ```
 #
 **check_bundle_metrics** : Provides interface to update/list metrics under a check_bundle.
  - **Query format**
 ```json
-  {"check_bundle_id":"<check_bundle_id>"} 
+  {"check_bundle_id":"<check_bundle_id>"}
 ```
  - **Query field (key) description**
     - **check_bundle_id** : The integer part of _cid value in check_bundle API object (known check_bundle cid)
  - **Example**
 ```json
-$ circli -call get -object check_bundle_metrics -where '{"check_bundle_id":158234}' 
+$ circli -call get -object check_bundle_metrics -where '{"check_bundle_id":158234}'
 {
         "_cid": "/check_bundle_metrics/158234",
         "metrics": [
@@ -570,7 +573,7 @@ $ circli -call get -object check_bundle_metrics -where '{"check_bundle_id":15823
                 }
         ]
 }
-$ 
+$
 ```
 #
 **check_move** : Request that a Check be moved from one Broker to another
@@ -591,7 +594,7 @@ $
          "check_id": 167194,
          "new_broker": "/broker/1"
  }
- $ 
+ $
 ```
 #
 **contact_group** : Provides means of being notified about alerts. Each contact_group can have one to many users and means of contact
@@ -647,7 +650,7 @@ $
                  "service:test"
          ]
  }
- $ 
+ $
 ```
 #
 **dashboard** : Provides API access for creating, reading, updating and deleting Dashboards
@@ -663,7 +666,7 @@ $
 ```json
   $ circli -object dashboard -call get -where '{"title_like":"Fancy*"}'
   [
-          { 
+          {
                   "_created": 1472738070,
                   "options": {
                           "fullscreen_hide_title": false,
@@ -761,7 +764,7 @@ $
                   ]
           }
   ]
-  $ 
+  $
 ```
 #
 **data** : Readonly endpoint to pull the values of a single data point for a given time range
@@ -769,10 +772,10 @@ $
 ```json
   {"check_id":"<check_id>","metric_name":"<metric_name>","period":"<period>","start":"<start_epoch>","stop":"<stop_epoch>","type":"<type_of_metric>"}
 ```
- - **Query field (key) description** 
+ - **Query field (key) description**
     - **check_id** : The integer part of the value of _cid in a check API object
     - **metric_name** : String name of the metric that data extraction will be executed for
-    - **period** : For numeric and histogram types only, and not text. The resolution of data you want to get back (in seconds), valid values are: 60, 300, 1800, 10800, and 86400. 
+    - **period** : For numeric and histogram types only, and not text. The resolution of data you want to get back (in seconds), valid values are: 60, 300, 1800, 10800, and 86400.
     - **start** : The start time, in epoch seconds, of the duration you wish to export data from
     - **stop** : The end time, in epoch seconds, of the duration you wish to export data from
     - **type** : The type of data you wish to extract. This must be text, numeric, or histogram
@@ -837,11 +840,11 @@ $
                   "stddev": 0
           }
   ]
-  $  
+  $
 ```
 #
 **graph** : Allows mass creation, editing and removal of graphs
- - **Query format** 
+ - **Query format**
 ```json
   {"graph_id":"<graph_id>","title":"<title>","title_like":"<title_like>","tags_has":"<tag>"}
 ```
@@ -909,7 +912,7 @@ $
           ],
           "title": "xyz-app-07 eth4 Errors"
   }
-  $ 
+  $
 ```
 #
 **maintenance** : Schedule a maintenance window for your account, check bundle, rule set or host
@@ -917,10 +920,10 @@ $
 ```json
   {"maintenance_id":"<maintenance_id>","item":"<item>","type":"<type>","tags_has":"<tag>","start_ge":"<start>","stop_le":"<stop>"}
 ```
- - **Query field (key) description** 
+ - **Query field (key) description**
     - **maintenance_id** : Integer part of the value of _cid in maintenance API object
     - **item** : String value of item in maintenance API object
-    - **item_like** : Item string pattern to find maintenance API objects with matching item values 
+    - **item_like** : Item string pattern to find maintenance API objects with matching item values
     - **tags_has** : Tag string to search maintenance API objects that have matching tag
     - **start_ge** : Integer lower bound for the value of start in maintenance API object (ge = greater than or equal to)
     - **start_gt** : Integer lower bound for the value of start in maintenance API object (gt = greater than)
@@ -948,7 +951,7 @@ $
           ],
           "type": "host"
   }
-  $ 
+  $
 ```
 #
 **metric_cluster** : A metric cluster is a cluster of metrics defined by a set of queries
@@ -958,7 +961,7 @@ $
 ```
  - **Query field (key) description**
     - **metric_cluster_id** : Integer part of the value of _cid in metric_cluster API object
-    - **name** : String value of name in metric_cluster API object 
+    - **name** : String value of name in metric_cluster API object
     - **name_like** : String pattern to search metric_clusters by matching name field values
     - **tags_has** : Tag string to search metric_clusters that have a matching tag
  - **Example**
@@ -1005,7 +1008,7 @@ $
                   "_matching_metrics": null
           }
   ]
-  $ 
+  $
 ```
 #
 **rule_set** : define a collection of rules to apply to a given metric
@@ -1013,10 +1016,10 @@ $
 ```json
   {"name":"<rule_set_name>","check":"<check_id>"}
 ```
- - **Query field (key) description** 
+ - **Query field (key) description**
     - **name** : The string value of _cid field in a rule_set API object
-    - **check** : Integer part of the value of _cid in a check API object, to list rule set that are monitoring a particular check 
- - **Example**  
+    - **check** : Integer part of the value of _cid in a check API object, to list rule set that are monitoring a particular check
+ - **Example**
 ```json
   $ go run circli.go -object rule_set -call get -where '{"check":163862}'
   [
@@ -1089,7 +1092,7 @@ $
                   ]
           }
   ]
-  $ 
+  $
 ```
 #
 **rule_set_group** : Allows togroup together rule sets and trigger alerts based on combinations of those rule sets faulting
@@ -1145,7 +1148,7 @@ $
                   ]
           }
   ]
-  $ 
+  $
 ```
 #
 **tags** : List all tags in use in your account (don't have any fields, Readonly)
@@ -1161,7 +1164,7 @@ $
  {
          "_cid": "/tag/haproxy"
  }
- $ 
+ $
 ```
 #
 **template** : A means to setup a mass number of checks quickly through both the API and UI
@@ -1174,7 +1177,7 @@ $
   	- **name** : String value of name in template API object
   	- **name_like** : String pattern to search templates by matching name field values
   	- **tags_has** : Tag string to search templates that have a matching tag
- 
+
  - **Example**
 ```json
   $ circli -object template -call get -where '{"tags_has":"cluster:web"}'
@@ -1231,7 +1234,7 @@ $
                   "lastname": "Smith"
           }
   ]
-  $ 
+  $
 ```
 #
 **worksheet** : Collection of graphs and allow quick correlation across them
@@ -1240,7 +1243,7 @@ $
   {"worksheet_id":"<worksheet id>","title":"<worksheet title>","title_like":"<title string pattern>","tags_has":"<tag>"}
 ```
  - **Query field (key) description**
-    - **worksheet_id** : Hex value of _cid in worksheet API object 
+    - **worksheet_id** : Hex value of _cid in worksheet API object
     - **title** : String value of title in worksheet API object
     - **title_like** : String pattern to search worksheets by matching title field values
     - **tags_has** : Tag string to search worksheets that have a matching tag
@@ -1270,16 +1273,16 @@ $
                   "title": "COSI xyz-app-07 1.2.3.4"
           }
   ]
-  $ 
+  $
 ```
 #
 ### List Calls
-List calls are made to get the complete listing of all objects of a given type. 
+List calls are made to get the complete listing of all objects of a given type.
 #### CLI Syntax
 ```
 circli -object <object_type> -call list
 ```
-Possible Object Types : account, alert, annotation, broker, check, check_bundle, check_move, data, dashboard, graph, maintenance, metric_cluster, rule_set, rule_set_group, tag, template, user, worksheet 
+Possible Object Types : account, alert, annotation, broker, check, check_bundle, check_move, data, dashboard, graph, maintenance, metric_cluster, rule_set, rule_set_group, tag, template, user, worksheet
 ####Example : List all annotations
 ```json
 $ circli -object annotation -call list
@@ -1318,7 +1321,7 @@ $ circli -object annotation -call list
                 "title": "Moratorium is extended"
         }
 ]
-$ 
+$
 
 ```
 #
@@ -1329,7 +1332,7 @@ circli -object <object_type> -call create [-where <json_string> | -file <json_fi
 ```
 #### Example : Create a graph
 ```json
-$ cat new_graph.json 
+$ cat new_graph.json
 {
     "access_keys": [],
     "composites": [],
@@ -1385,8 +1388,8 @@ $ cat new_graph.json
     ],
     "title": "Testing graph create through circli"
 }
-$ 
-$ circli -object graph -call create -file new_graph.json 
+$
+$ circli -object graph -call create -file new_graph.json
 {
         "access_keys": [],
         "composites": [],
@@ -1438,7 +1441,7 @@ $ circli -object graph -call create -file new_graph.json
         "metric_clusters": [],
         "min_right_y": null
 }
-$ 
+$
 ```
 #
 ### Update Calls
@@ -1448,15 +1451,15 @@ circli -object <object_type> -call update -oid <object_id> [-where <json_string>
 ```
 #### Example 1: Update a check bundle with a new set of tags
 ```json
-$ cat bundle_update.json 
+$ cat bundle_update.json
 {"tags": [
         "web-layer:server",
         "web-region:dc",
         "cluster:202",
         "api_create"
     ]}
-$ 
-$ circli -object check_bundle -call update -oid "137665"  -file bundle_update.json 
+$
+$ circli -object check_bundle -call update -oid "137665"  -file bundle_update.json
 {
         "_created": 1471979522,
         "status": "active",
@@ -1475,7 +1478,7 @@ $ circli -object check_bundle -call update -oid "137665"  -file bundle_update.js
                         "type": "numeric",
                         "units": null,
                         "tags": []
-                }],        
+                }],
         "_cid": "/check_bundle/137665",
         "display_name": "xyz-app-03 Session/Cache Metrics",
         "tags": [
@@ -1508,7 +1511,7 @@ $ circli -object check_bundle -call update -oid "137665"  -file bundle_update.js
                 "privacy_protocol": "DES"
         }
 }
-$ 
+$
 ```
 #### Example 2: Update template and unbind a host
 - before update
@@ -1539,14 +1542,14 @@ $
 ```
 - updating template with host unbinding (removing host *xyz-web-03.wash.dc.xyz.net*)
 ```json
-$ cat template_update.json 
+$ cat template_update.json
 {
 "hosts":[
                 "xyz-web-01.wash.dc.xyz.net",
                 "xyz-web-02.wash.dc.xyz.net"
         ],
-"name":"test", 
-"master_host":"xyz-web-01.wash.dc.xyz.net", 
+"name":"test",
+"master_host":"xyz-web-01.wash.dc.xyz.net",
 "check_bundles":[
                         {       "bundle_id":"/check_bundle/135930",
                                 "name":"xyz-web-01.wash.dc.xyz.net json"
@@ -1592,7 +1595,7 @@ circli -object <object_type> -call delete -oid <object_id>
 #### Example : Delete a graph
 ```json
 $ circli -object graph -call delete -oid fff3219f-7fd5-f2f5-f0f1-f2ff4f291670
-2016/08/25 20:50:47 graph delete :  fff3219f-7fd5-f2f5-f0f1-f2ff4f291670 
+2016/08/25 20:50:47 graph delete :  fff3219f-7fd5-f2f5-f0f1-f2ff4f291670
 $ circli -object graph -call get -where '{"graph_id":"fff3219f-7fd5-f2f5-f0f1-f2ff4f291670"}'
 {
         "_cid": "",
@@ -1614,5 +1617,5 @@ $ circli -object graph -call get -where '{"graph_id":"fff3219f-7fd5-f2f5-f0f1-f2
         "tags": null,
         "title": ""
 }
-$ 
+$
 ```
